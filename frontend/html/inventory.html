@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inventory | MediTrack</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>💊 MediTrack</h2>
+        <div class="user-info">
+          <div class="user-avatar">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <div class="user-details">
+            <span class="user-name">Loading...</span>
+            <span class="user-role">User</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+          <li><a href="add-medicine.html"><i class="fas fa-plus-circle"></i> Add Medicine</a></li>
+          <li><a href="inventory.html" class="active"><i class="fas fa-boxes"></i> Inventory</a></li>
+          <li><a href="expiry.html"><i class="fas fa-clock"></i> Expiry Tracker</a></li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="logout-btn" data-action="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <h1>Medicine Inventory</h1>
+
+      <div class="inventory-controls">
+        <div class="search-filter">
+          <input type="text" id="searchInput" placeholder="Search medicines..." class="search-box">
+          <select id="categoryFilter" class="filter-select">
+            <option value="">All Categories</option>
+          </select>
+          <select id="statusFilter" class="filter-select">
+            <option value="">All Status</option>
+            <option value="valid">Valid</option>
+            <option value="expiring">Expiring Soon</option>
+            <option value="expired">Expired</option>
+            <option value="low-stock">Low Stock</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="inventory-summary">
+        <div class="summary-card blue" id="totalStock">Total Stock: 0</div>
+        <div class="summary-card red" id="expiredStock">Expired: 0</div>
+        <div class="summary-card orange" id="lowStock">Low Stock: 0</div>
+        <div class="summary-card green" id="totalValue">Total Value: ₹0</div>
+      </div>
+
+      <div class="inventory-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Manufacturer</th>
+              <th>Category</th>
+              <th>Batch</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Expiry</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryBody">
+            <!-- Data injected by JS -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/inventory.js"></script>
+</body>
+</html>

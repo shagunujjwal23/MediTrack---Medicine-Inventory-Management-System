@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - Medicine Inventory</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>💊 MediTrack</h2>
+        <div class="user-info">
+          <div class="user-avatar">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <div class="user-details">
+            <span class="user-name">Loading...</span>
+            <span class="user-role">User</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a href="dashboard.html" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+          <li><a href="add-medicine.html"><i class="fas fa-plus-circle"></i> Add Medicine</a></li>
+          <li><a href="inventory.html"><i class="fas fa-boxes"></i> Inventory</a></li>
+          <li><a href="expiry.html"><i class="fas fa-clock"></i> Expiry Tracker</a></li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="logout-btn" data-action="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content fade-in">
+      <!-- Header Section -->
+      <div class="dashboard-header">
+        <div class="header-content">
+          <h1 class="dashboard-title">
+            <i class="fas fa-chart-line"></i>
+            Dashboard Overview
+          </h1>
+          <p class="dashboard-subtitle">Monitor your medicine inventory at a glance</p>
+        </div>
+        <div class="header-actions">
+          <button class="refresh-btn" onclick="location.reload()">
+            <i class="fas fa-sync-alt"></i>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="stats-grid slide-up">
+        <div class="stat-card primary">
+          <div class="stat-icon">
+            <i class="fas fa-pills"></i>
+          </div>
+          <div class="stat-content">
+            <h3 id="totalMedicines">0</h3>
+            <p>Total Medicines</p>
+            <span class="stat-trend">
+              <i class="fas fa-arrow-up"></i>
+              Items in stock
+            </span>
+          </div>
+        </div>
+
+        <div class="stat-card danger">
+          <div class="stat-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <div class="stat-content">
+            <h3 id="expiredMedicines">0</h3>
+            <p>Expired</p>
+            <span class="stat-trend">
+              <i class="fas fa-arrow-down"></i>
+              Need attention
+            </span>
+          </div>
+        </div>
+
+        <div class="stat-card warning">
+          <div class="stat-icon">
+            <i class="fas fa-battery-quarter"></i>
+          </div>
+          <div class="stat-content">
+            <h3 id="lowStock">0</h3>
+            <p>Low Stock</p>
+            <span class="stat-trend">
+              <i class="fas fa-shopping-cart"></i>
+              Reorder required
+            </span>
+          </div>
+        </div>
+
+        <div class="stat-card success">
+          <div class="stat-icon">
+            <i class="fas fa-rupee-sign"></i>
+          </div>
+          <div class="stat-content">
+            <h3 id="totalValue">₹0</h3>
+            <p>Total Value</p>
+            <span class="stat-trend">
+              <i class="fas fa-chart-line"></i>
+              Inventory worth
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Grid -->
+      <div class="dashboard-grid">
+        <!-- Chart Section -->
+        <div class="chart-section">
+          <div class="section-header">
+            <h3>
+              <i class="fas fa-chart-pie"></i>
+              Expiry Status Overview
+            </h3>
+            <span class="section-badge">Live Data</span>
+          </div>
+          <div class="modern-chart" id="expiryChart">
+            <div class="chart-item valid">
+              <div class="chart-bar">
+                <div class="bar-fill" id="validBar"></div>
+              </div>
+              <div class="chart-label">
+                <span class="label-text">Valid</span>
+                <span class="label-count" id="validCount">0</span>
+              </div>
+            </div>
+            <div class="chart-item expiring">
+              <div class="chart-bar">
+                <div class="bar-fill" id="expiringBar"></div>
+              </div>
+              <div class="chart-label">
+                <span class="label-text">Expiring Soon</span>
+                <span class="label-count" id="expiringCount">0</span>
+              </div>
+            </div>
+            <div class="chart-item expired">
+              <div class="chart-bar">
+                <div class="bar-fill" id="expiredBar"></div>
+              </div>
+              <div class="chart-label">
+                <span class="label-text">Expired</span>
+                <span class="label-count" id="expiredCount">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-section">
+          <div class="section-header">
+            <h3>
+              <i class="fas fa-clock"></i>
+              Recent Activity
+            </h3>
+            <a href="inventory.html" class="view-all-link">View All</a>
+          </div>
+          <div class="activity-list" id="recentList">
+            <div class="activity-item placeholder">
+              <div class="activity-icon">
+                <i class="fas fa-plus-circle"></i>
+              </div>
+              <div class="activity-content">
+                <p>No recent activity</p>
+                <small>Add medicines to see recent changes</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions-modern">
+        <div class="section-header">
+          <h3>
+            <i class="fas fa-bolt"></i>
+            Quick Actions
+          </h3>
+          <p>Manage your inventory efficiently</p>
+        </div>
+        <div class="action-grid">
+          <a href="add-medicine.html" class="modern-action-btn primary">
+            <div class="action-icon">
+              <i class="fas fa-plus-circle"></i>
+            </div>
+            <div class="action-content">
+              <h4>Add Medicine</h4>
+              <p>Add new items to inventory</p>
+            </div>
+            <div class="action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </a>
+
+          <a href="expiry.html" class="modern-action-btn warning">
+            <div class="action-icon">
+              <i class="fas fa-calendar-times"></i>
+            </div>
+            <div class="action-content">
+              <h4>Expiry Tracker</h4>
+              <p>Monitor expiring medicines</p>
+            </div>
+            <div class="action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </a>
+
+          <a href="inventory.html" class="modern-action-btn info">
+            <div class="action-icon">
+              <i class="fas fa-boxes"></i>
+            </div>
+            <div class="action-content">
+              <h4>View Inventory</h4>
+              <p>Browse all medicines</p>
+            </div>
+            <div class="action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/dashboard.js?v=4"></script>
+</body>
+</html>
