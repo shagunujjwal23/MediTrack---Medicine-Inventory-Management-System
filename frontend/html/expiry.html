@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Expiry Tracker | MediTrack</title>
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
+
 <body>
   <div class="container">
     <aside class="sidebar">
@@ -48,40 +50,26 @@
             <i class="fas fa-calendar-times"></i>
             Expiry Tracker
           </h1>
-          <p class="expiry-subtitle">Monitor medicine expiration dates and take timely action to prevent waste and ensure safety</p>
+          <p class="expiry-subtitle">
+            Monitor medicine expiration dates and take timely action to prevent waste and ensure safety
+          </p>
         </div>
         <div class="header-actions">
           <div class="header-filters">
-            <select id="sortFilter" class="filter-select">
-              <option value="expiry">📅 Sort by Expiry Date</option>
-              <option value="name">🔤 Sort by Name</option>
-              <option value="quantity">📦 Sort by Quantity</option>
-              <option value="price">💰 Sort by Price</option>
-            </select>
             <select id="filterDays" class="filter-select">
+              <option value="all">🌐 All medicines</option>
               <option value="7">⚡ Expiring in 7 days</option>
               <option value="30">⚠️ Expiring in 30 days</option>
               <option value="60">📋 Expiring in 60 days</option>
               <option value="90">📊 Expiring in 90 days</option>
-              <option value="all">🌐 All medicines</option>
             </select>
             <select id="categoryFilter" class="filter-select">
               <option value="all">🏷️ All Categories</option>
               <option value="expired">❌ Expired</option>
               <option value="expiring">⚠️ Expiring Soon</option>
-              <option value="valid">✅ Valid</option>
             </select>
           </div>
           <div class="action-buttons">
-            <button id="exportBtn" class="action-btn export-btn">
-              <i class="fas fa-download"></i>
-              Export Report
-            </button>
-            <button id="refreshBtn" class="action-btn refresh-btn">
-              <i class="fas fa-sync-alt"></i>
-              <span class="loading-spinner" style="display: none;"></span>
-              Refresh
-            </button>
             <button id="bulkActionBtn" class="action-btn bulk-btn" style="display: none;">
               <i class="fas fa-tasks"></i>
               Bulk Actions
@@ -92,7 +80,8 @@
 
       <!-- Status Overview Cards -->
       <div class="expiry-overview">
-        <div class="overview-card critical" onclick="showCategory('expired')" data-category="expired">
+        <!-- Expired Card -->
+        <div class="overview-card critical" data-category="expired">
           <div class="card-icon">
             <i class="fas fa-times-circle"></i>
           </div>
@@ -108,7 +97,8 @@
           </div>
         </div>
 
-        <div class="overview-card warning" onclick="showCategory('expiring')" data-category="expiring">
+        <!-- Expiring Soon Card -->
+        <div class="overview-card warning" data-category="expiring">
           <div class="card-icon">
             <i class="fas fa-exclamation-triangle"></i>
           </div>
@@ -123,189 +113,45 @@
             <span>+0 this week</span>
           </div>
         </div>
-
-        <div class="overview-card success" onclick="showCategory('valid')" data-category="valid">
-          <div class="card-icon">
-            <i class="fas fa-check-circle"></i>
-          </div>
-          <div class="card-content">
-            <h3 id="validCount">0</h3>
-            <p>Valid Medicines</p>
-            <span class="card-status">✅ Good Condition</span>
-          </div>
-          <div class="card-indicator success-indicator"></div>
-          <div class="card-trend" id="validTrend">
-            <i class="fas fa-arrow-up"></i>
-            <span>+0 this week</span>
-          </div>
-        </div>
-
-
       </div>
 
-      <!-- Quick Actions Bar -->
-      <div class="quick-actions-bar">
-        <div class="quick-action-item">
-          <button class="quick-action-btn" onclick="exportExpiredReport()">
-            <i class="fas fa-file-export"></i>
-            <span>Export Expired</span>
-          </button>
-        </div>
-        <div class="quick-action-item">
-          <button class="quick-action-btn" onclick="scheduleReminders()">
-            <i class="fas fa-bell"></i>
-            <span>Set Reminders</span>
-          </button>
-        </div>
-        <div class="quick-action-item">
-          <button class="quick-action-btn" onclick="generateRestockList()">
-            <i class="fas fa-shopping-cart"></i>
-            <span>Restock List</span>
-          </button>
-        </div>
-        <div class="quick-action-item">
-          <button class="quick-action-btn" onclick="viewAnalytics()">
-            <i class="fas fa-chart-line"></i>
-            <span>Analytics</span>
-          </button>
-        </div>
+      <!-- Summary Cards (keep as they are) -->
+
+      <!-- Combined Medicines Table -->
+      <div class="table-section">
+        <h2>Expiry Status of Medicines</h2>
+        <table class="expiry-table">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Medicine Name</th>
+              <th>Expiry Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="expiryTableBody">
+            <!-- Filled by JS: Expired + Expiring Soon -->
+          </tbody>
+        </table>
       </div>
 
-      <!-- Medicine Lists -->
-      <div class="expiry-content">
-        <!-- Tab Navigation -->
-        <div class="tab-navigation">
-          <button class="tab-btn active" data-tab="expired">
-            <i class="fas fa-times-circle"></i>
-            <span>Expired Medicines</span>
-            <span class="tab-count" id="expiredTabCount">0</span>
+      <!-- Pagination -->
+      <div class="pagination-container" id="paginationContainer" style="display: none;">
+        <div class="pagination-info">
+          <span id="paginationInfo">Showing 1-10 of 50 items</span>
+        </div>
+        <div class="pagination-controls">
+          <button class="pagination-btn" id="prevPage" disabled>
+            <i class="fas fa-chevron-left"></i>
+            Previous
           </button>
-          <button class="tab-btn" data-tab="expiring">
-            <i class="fas fa-exclamation-triangle"></i>
-            <span>Expiring Soon</span>
-            <span class="tab-count" id="expiringSoonTabCount">0</span>
+          <div class="page-numbers" id="pageNumbers">
+            <!-- Page numbers will be generated here -->
+          </div>
+          <button class="pagination-btn" id="nextPage">
+            Next
+            <i class="fas fa-chevron-right"></i>
           </button>
-          <button class="tab-btn" data-tab="valid">
-            <i class="fas fa-check-circle"></i>
-            <span>Valid Medicines</span>
-            <span class="tab-count" id="validTabCount">0</span>
-          </button>
-
-        </div>
-
-        <!-- Search and Filter Bar -->
-        <div class="search-filter-bar">
-          <div class="search-container">
-            <i class="fas fa-search search-icon"></i>
-            <input type="text" id="medicineSearch" class="search-input" placeholder="Search medicines by name, batch, or manufacturer...">
-            <button class="clear-search-btn" id="clearSearch" style="display: none;">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-          <div class="filter-options">
-            <button class="filter-toggle-btn" id="advancedFilters">
-              <i class="fas fa-filter"></i>
-              Advanced Filters
-            </button>
-            <div class="view-toggle">
-              <button class="view-btn active" data-view="grid">
-                <i class="fas fa-th"></i>
-              </button>
-              <button class="view-btn" data-view="list">
-                <i class="fas fa-list"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Advanced Filters Panel -->
-        <div class="advanced-filters-panel" id="advancedFiltersPanel" style="display: none;">
-          <div class="filter-row">
-            <div class="filter-group">
-              <label>Price Range</label>
-              <div class="range-inputs">
-                <input type="number" id="minPrice" placeholder="Min" class="range-input">
-                <span>to</span>
-                <input type="number" id="maxPrice" placeholder="Max" class="range-input">
-              </div>
-            </div>
-            <div class="filter-group">
-              <label>Quantity Range</label>
-              <div class="range-inputs">
-                <input type="number" id="minQuantity" placeholder="Min" class="range-input">
-                <span>to</span>
-                <input type="number" id="maxQuantity" placeholder="Max" class="range-input">
-              </div>
-            </div>
-            <div class="filter-group">
-              <label>Manufacturer</label>
-              <select id="manufacturerFilter" class="filter-select-small">
-                <option value="">All Manufacturers</option>
-              </select>
-            </div>
-            <div class="filter-actions">
-              <button class="apply-filters-btn">Apply Filters</button>
-              <button class="reset-filters-btn">Reset</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab Content -->
-        <div class="tab-content">
-          <div class="medicine-container" id="expiredContainer" data-category="expired">
-            <div class="medicine-grid" id="expiredList">
-              <!-- Expired medicines will be populated here -->
-            </div>
-            <div class="empty-state" id="expiredEmpty" style="display: none;">
-              <i class="fas fa-check-circle"></i>
-              <h3>No Expired Medicines</h3>
-              <p>Great! You don't have any expired medicines at the moment.</p>
-            </div>
-          </div>
-
-          <div class="medicine-container" id="expiringContainer" data-category="expiring" style="display: none;">
-            <div class="medicine-grid" id="expiringSoonList">
-              <!-- Expiring medicines will be populated here -->
-            </div>
-            <div class="empty-state" id="expiringEmpty" style="display: none;">
-              <i class="fas fa-calendar-check"></i>
-              <h3>No Medicines Expiring Soon</h3>
-              <p>All your medicines have sufficient time before expiration.</p>
-            </div>
-          </div>
-
-          <div class="medicine-container" id="validContainer" data-category="valid" style="display: none;">
-            <div class="medicine-grid" id="validList">
-              <!-- Valid medicines will be populated here -->
-            </div>
-            <div class="empty-state" id="validEmpty" style="display: none;">
-              <i class="fas fa-plus-circle"></i>
-              <h3>No Valid Medicines</h3>
-              <p>Add some medicines to your inventory to get started.</p>
-            </div>
-          </div>
-
-
-        </div>
-
-        <!-- Pagination -->
-        <div class="pagination-container" id="paginationContainer" style="display: none;">
-          <div class="pagination-info">
-            <span id="paginationInfo">Showing 1-10 of 50 items</span>
-          </div>
-          <div class="pagination-controls">
-            <button class="pagination-btn" id="prevPage" disabled>
-              <i class="fas fa-chevron-left"></i>
-              Previous
-            </button>
-            <div class="page-numbers" id="pageNumbers">
-              <!-- Page numbers will be generated here -->
-            </div>
-            <button class="pagination-btn" id="nextPage">
-              Next
-              <i class="fas fa-chevron-right"></i>
-            </button>
-          </div>
         </div>
       </div>
     </main>

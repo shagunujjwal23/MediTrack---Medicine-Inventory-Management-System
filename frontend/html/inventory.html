@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Inventory | MediTrack</title>
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
+
 <body>
   <div class="container">
     <aside class="sidebar">
@@ -44,21 +46,47 @@
       <h1>Medicine Inventory</h1>
 
       <div class="inventory-controls">
-        <div class="search-filter">
-          <input type="text" id="searchInput" placeholder="Search medicines..." class="search-box">
-          <select id="categoryFilter" class="filter-select">
-            <option value="">All Categories</option>
-          </select>
-          <select id="statusFilter" class="filter-select">
-            <option value="">All Status</option>
-            <option value="valid">Valid</option>
-            <option value="expiring">Expiring Soon</option>
-            <option value="expired">Expired</option>
-            <option value="low-stock">Low Stock</option>
-          </select>
-        </div>
+        <!-- Search -->
+        <input type="text" id="searchInput" placeholder="Search medicines..." class="search-box">
+
+        <!-- Category Filter -->
+        <select id="categoryFilter" class="filter-select">
+          <option value="">All Categories</option>
+        </select>
+
+        <!-- Status Filter -->
+        <select id="statusFilter" class="filter-select">
+          <option value="">All Status</option>
+          <option value="valid">Valid</option>
+          <option value="expiring">Expiring Soon</option>
+          <option value="expired">Expired</option>
+          <option value="low-stock">Low Stock</option>
+        </select>
+
+        <!-- Manufacturer Filter -->
+        <select id="manufacturerFilter" class="filter-select">
+          <option value="">All Manufacturers</option>
+        </select>
+
+        <!-- Stock Level Filter -->
+        <select id="stockFilter" class="filter-select">
+          <option value="">All Stock</option>
+          <option value="low">Low Stock (≤2)</option>
+          <option value="medium">Medium (3–10)</option>
+          <option value="high">High (>10)</option>
+        </select>
+
+        <!-- Sort By -->
+        <select id="sortFilter" class="filter-select">
+          <option value="">Sort By</option>
+          <option value="name">Name (A–Z)</option>
+          <option value="expiry">Expiry Date</option>
+          <option value="price">Price (Low → High)</option>
+          <option value="price-desc">Price (High → Low)</option>
+        </select>
       </div>
 
+      <!-- ✅ SUMMARY CARDS OUTSIDE -->
       <div class="inventory-summary">
         <div class="summary-card blue" id="totalStock">Total Stock: 0</div>
         <div class="summary-card red" id="expiredStock">Expired: 0</div>
@@ -91,4 +119,5 @@
 
   <script src="../js/inventory.js"></script>
 </body>
+
 </html>

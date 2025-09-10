@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Add Medicine | MediTrack</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
+
 <body>
   <div class="container">
     <aside class="sidebar">
@@ -56,8 +58,11 @@
         <div class="form-row">
           <div class="form-group">
             <label for="batchNo">Batch Number *</label>
-            <input type="text" id="batchNo" placeholder="Enter batch number" required>
+            <input type="text" id="batchNo" placeholder="Enter batch number" required
+              pattern="^(?=.*[A-Za-z])(?=.*[0-9])[A-Za-z0-9]{4,10}$"
+              title="Batch number must be 4–10 characters, contain at least 1 letter and 1 number, and only use A–Z, 0–9">
           </div>
+
           <div class="form-group">
             <label for="category">Category *</label>
             <select id="category" required>
@@ -79,7 +84,8 @@
               <option value="Neurological">Neurological</option>
               <option value="Other">Other</option>
             </select>
-            <input type="text" id="customCategory" placeholder="Enter custom category" style="display: none; margin-top: 8px;">
+            <input type="text" id="customCategory" placeholder="Enter custom category"
+              style="display: none; margin-top: 8px;">
           </div>
         </div>
 
@@ -91,12 +97,10 @@
           <div class="form-group">
             <label for="unit">Unit</label>
             <select id="unit">
-              <option value="tablet">Tablet</option>
-              <option value="strip">Strip</option>
+              <option value="">Select Unit</option>
               <option value="pack">Pack</option>
               <option value="bottle">Bottle</option>
               <option value="vial">Vial</option>
-              <option value="capsule">Capsule</option>
             </select>
           </div>
         </div>
@@ -137,7 +141,8 @@
 
         <div class="form-group full-width">
           <label for="description">Description/Notes</label>
-          <textarea id="description" placeholder="Enter any additional notes or description (optional)" rows="4"></textarea>
+          <textarea id="description" placeholder="Enter any additional notes or description (optional)"
+            rows="4"></textarea>
         </div>
 
         <button type="submit" class="submit-btn">
@@ -149,4 +154,5 @@
   </div>
   <script src="../js/add-medicine.js"></script>
 </body>
+
 </html>

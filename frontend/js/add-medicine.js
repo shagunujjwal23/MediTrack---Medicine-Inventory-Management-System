@@ -37,18 +37,18 @@ function checkAuthenticationSoftly() {
                 'Authorization': `Bearer ${token}`
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                updateUserInfo(data.user);
-            } else {
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateUserInfo(data.user);
+                } else {
+                    loadUserFromStorage();
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user profile:', error);
                 loadUserFromStorage();
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching user profile:', error);
-            loadUserFromStorage();
-        });
+            });
     } else {
         // Try localStorage first
         loadUserFromStorage();
@@ -66,17 +66,17 @@ function logout() {
                 'Content-Type': 'application/json'
             }
         })
-        .finally(() => {
-            removeToken();
-            window.location.href = 'index.html';
-        });
+            .finally(() => {
+                removeToken();
+                window.location.href = 'index.html';
+            });
     } else {
         window.location.href = 'index.html';
     }
 }
 
 // Initialize page
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('Add Medicine page loading...'); // Debug log
 
     // Initialize page components first
@@ -110,23 +110,23 @@ function initializePage() {
                 'Authorization': `Bearer ${token}`
             }
         })
-        .then(response => {
-            console.log('Profile response status:', response.status); // Debug log
-            return response.json();
-        })
-        .then(data => {
-            console.log('Profile data:', data); // Debug log
-            if (data.success) {
-                updateUserInfo(data.user);
-            } else {
-                // Fallback to localStorage
+            .then(response => {
+                console.log('Profile response status:', response.status); // Debug log
+                return response.json();
+            })
+            .then(data => {
+                console.log('Profile data:', data); // Debug log
+                if (data.success) {
+                    updateUserInfo(data.user);
+                } else {
+                    // Fallback to localStorage
+                    loadUserFromStorage();
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user profile:', error);
                 loadUserFromStorage();
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching user profile:', error);
-            loadUserFromStorage();
-        });
+            });
     } else {
         // Try localStorage first before redirecting
         loadUserFromStorage();
@@ -184,7 +184,7 @@ function setupCategoryDropdown() {
     const customCategoryInput = document.getElementById("customCategory");
 
     if (categorySelect && customCategoryInput) {
-        categorySelect.addEventListener('change', function() {
+        categorySelect.addEventListener('change', function () {
             if (this.value === 'Other') {
                 customCategoryInput.style.display = 'block';
                 customCategoryInput.required = true;
@@ -199,107 +199,114 @@ function setupCategoryDropdown() {
 }
 
 document.getElementById("medicineForm").addEventListener("submit", function (e) {
-  e.preventDefault();
+    e.preventDefault();
 
-  // Validate expiry date
-  const expiryDate = new Date(document.getElementById("expiryDate").value);
-  const purchaseDate = new Date(document.getElementById("purchaseDate").value);
-  const today = new Date();
+    // Validate expiry date
+    const expiryDate = new Date(document.getElementById("expiryDate").value);
+    const purchaseDate = new Date(document.getElementById("purchaseDate").value);
+    const today = new Date();
 
-  if (expiryDate <= today) {
-    alert("Expiry date must be in the future!");
-    return;
-  }
+    if (expiryDate <= today) {
+        alert("Expiry date must be in the future!");
+        return;
+    }
 
-  if (purchaseDate > today) {
-    alert("Purchase date cannot be in the future!");
-    return;
-  }
+    if (purchaseDate > today) {
+        alert("Purchase date cannot be in the future!");
+        return;
+    }
+    if (expiryDate <= purchaseDate) {
+        alert("Expiry date must be after purchase date!");
+        return;
+    }
 
-  if (expiryDate <= purchaseDate) {
-    alert("Expiry date must be after purchase date!");
-    return;
-  }
+    // 🔍 Validate batch number
+    const batchNo = document.getElementById("batchNo").value.trim();
+    const batchRegex = /^(?=.*[A-Za-z])(?=.*[0-9])[A-Za-z0-9]{4,10}$/;
+    if (!batchRegex.test(batchNo)) {
+        alert("❌ Invalid Batch Number.\n\nRules:\n- Must contain at least 1 letter and 1 number\n- Length 4–10 characters\n- Only letters (A–Z) and numbers (0–9), no spaces/symbols");
+        return;
+    }
 
-  // Get category value (either from dropdown or custom input)
-  const categorySelect = document.getElementById("category");
-  const customCategoryInput = document.getElementById("customCategory");
-  const categoryValue = categorySelect.value === 'Other' ? customCategoryInput.value : categorySelect.value;
+    // Get category value (either from dropdown or custom input)
+    const categorySelect = document.getElementById("category");
+    const customCategoryInput = document.getElementById("customCategory");
+    const categoryValue = categorySelect.value === 'Other' ? customCategoryInput.value : categorySelect.value;
 
-  const medicine = {
-    name: document.getElementById("medicineName").value,
-    batchNo: document.getElementById("batchNo").value,
-    category: categoryValue,
-    quantity: parseInt(document.getElementById("quantity").value),
-    unit: document.getElementById("unit").value,
-    price: parseFloat(document.getElementById("price").value),
-    expiryDate: document.getElementById("expiryDate").value,
-    manufacturer: document.getElementById("manufacturer")?.value || 'N/A',
-    purchaseDate: document.getElementById("purchaseDate").value,
-    id: Date.now().toString() // Add unique ID for better tracking
-  };
+    const medicine = {
+        name: document.getElementById("medicineName").value,
+        batchNo: document.getElementById("batchNo").value,
+        category: categoryValue,
+        quantity: parseInt(document.getElementById("quantity").value),
+        unit: document.getElementById("unit").value,
+        price: parseFloat(document.getElementById("price").value),
+        expiryDate: document.getElementById("expiryDate").value,
+        manufacturer: document.getElementById("manufacturer")?.value || 'N/A',
+        purchaseDate: document.getElementById("purchaseDate").value,
+        id: Date.now().toString() // Add unique ID for better tracking
+    };
 
-  // Submit to API
-  const token = getToken();
-  if (!token) {
-    alert('Authentication required. Please login again.');
-    window.location.href = 'index.html';
-    return;
-  }
-
-  // Show loading state
-  const submitBtn = document.querySelector('button[type="submit"]');
-  const originalText = submitBtn.textContent;
-  submitBtn.textContent = 'Adding Medicine...';
-  submitBtn.disabled = true;
-
-  fetch(`${API_BASE_URL}/medicines`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(medicine)
-  })
-  .then(response => {
-    if (!response.ok) {
-      if (response.status === 401) {
-        removeToken();
+    // Submit to API
+    const token = getToken();
+    if (!token) {
+        alert('Authentication required. Please login again.');
         window.location.href = 'index.html';
         return;
-      }
-      throw new Error('Failed to add medicine');
     }
-    return response.json();
-  })
-  .then(data => {
-    // Also store in localStorage for offline access
-    const medicines = JSON.parse(localStorage.getItem("medicines")) || [];
-    medicines.push({
-      ...medicine,
-      id: data._id || Date.now().toString(),
-      addedDate: new Date().toISOString().split('T')[0]
-    });
-    localStorage.setItem("medicines", JSON.stringify(medicines));
 
-    // Show success message
-    alert(`Medicine "${medicine.name}" added successfully!\nQuantity: ${medicine.quantity} ${medicine.unit}\nExpiry: ${new Date(medicine.expiryDate).toLocaleDateString()}`);
+    // Show loading state
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Adding Medicine...';
+    submitBtn.disabled = true;
 
-    // Reset form
-    document.getElementById("medicineForm").reset();
+    fetch(`${API_BASE_URL}/medicines`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(medicine)
+    })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401) {
+                    removeToken();
+                    window.location.href = 'index.html';
+                    return;
+                }
+                throw new Error('Failed to add medicine');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Also store in localStorage for offline access
+            const medicines = JSON.parse(localStorage.getItem("medicines")) || [];
+            medicines.push({
+                ...medicine,
+                id: data._id || Date.now().toString(),
+                addedDate: new Date().toISOString().split('T')[0]
+            });
+            localStorage.setItem("medicines", JSON.stringify(medicines));
 
-    // Set default purchase date to today
-    document.getElementById("purchaseDate").value = new Date().toISOString().split('T')[0];
-  })
-  .catch(error => {
-    console.error('Error adding medicine:', error);
-    alert('Failed to add medicine. Please try again.');
-  })
-  .finally(() => {
-    // Reset button state
-    submitBtn.textContent = originalText;
-    submitBtn.disabled = false;
-  });
+            // Show success message
+            alert(`Medicine "${medicine.name}" added successfully!\nQuantity: ${medicine.quantity} ${medicine.unit}\nExpiry: ${new Date(medicine.expiryDate).toLocaleDateString()}`);
+
+            // Reset form
+            document.getElementById("medicineForm").reset();
+
+            // Set default purchase date to today
+            document.getElementById("purchaseDate").value = new Date().toISOString().split('T')[0];
+        })
+        .catch(error => {
+            console.error('Error adding medicine:', error);
+            alert('Failed to add medicine. Please try again.');
+        })
+        .finally(() => {
+            // Reset button state
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        });
 });
 
 // Set default purchase date to today on page load (moved to main DOMContentLoaded handler above)

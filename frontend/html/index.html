@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,51 +8,54 @@
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
+
 <body class="login-body">
   <div class="login-container">
     <div class="login-header">
       <div class="logo">
         <i class="fas fa-pills"></i>
-        <h1>MediTrack</h1>
+        <h>Login</h>
       </div>
-      <p class="subtitle">Medicine Inventory Management System</p>
     </div>
 
     <form id="loginForm" class="login-form">
-      <div class="form-group">
-        <label for="username">Username or Email</label>
-        <div class="input-wrapper">
-          <i class="fas fa-user"></i>
-          <input type="text" id="username" placeholder="Enter your username or email" value="Shagun" required autocapitalize="words" autocomplete="off" />
+      <div class="form-fields">
+        <div class="form-group">
+          <label for="username">Username or Email</label>
+          <div class="input-wrapper">
+            <i class="fas fa-user"></i>
+            <input type="text" id="username" placeholder="Enter your username or email" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-wrapper password-wrapper">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" placeholder="Enter your password" required />
+            <button type="button" class="password-toggle" id="passwordToggle">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="password">Password</label>
-        <div class="input-wrapper password-wrapper">
-          <i class="fas fa-lock"></i>
-          <input type="password" id="password" placeholder="Enter your password" value="Shagun123" required />
-          <button type="button" class="password-toggle" id="passwordToggle">
-            <i class="fas fa-eye"></i>
-          </button>
-        </div>
-      </div>
+      <a href="#" class="forgot-password" id="forgotPassword">Forgot Password?</a>
 
-      <div class="form-options">
+      <div class="form-actions">
         <label class="remember-me">
           <input type="checkbox" id="rememberMe" />
           <span class="checkmark"></span>
           Remember me
         </label>
-        <a href="#" class="forgot-password" id="forgotPassword">Forgot Password?</a>
-      </div>
 
-      <button type="submit" class="login-btn" id="loginBtn">
-        <span class="btn-text">Sign In</span>
-        <div class="loading-spinner" id="loadingSpinner" style="display: none;">
-          <i class="fas fa-spinner fa-spin"></i>
-        </div>
-      </button>
+        <button type="submit" class="login-btn" id="loginBtn">
+          <span class="btn-text">SIGN IN</span>
+          <div class="loading-spinner" id="loadingSpinner" style="display: none;">
+            <i class="fas fa-spinner fa-spin"></i>
+          </div>
+        </button>
+      </div>
 
       <div class="alert" id="alertMsg" style="display: none;">
         <i class="alert-icon"></i>
@@ -126,7 +130,7 @@
 
   <script>
     // Immediate fix for button states
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       // Remove any loading classes immediately
       const loginBtn = document.getElementById('loginBtn');
       const registerBtn = document.getElementById('registerBtn');
@@ -143,4 +147,5 @@
   </script>
   <script src="../js/login.js"></script>
 </body>
+
 </html>

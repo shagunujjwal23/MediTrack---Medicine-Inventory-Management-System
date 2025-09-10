@@ -127,7 +127,7 @@ router.post('/register', authLimiter, registerValidation, async (req, res) => {
         const { username, email, password, firstName, lastName } = req.body;
 
         // Check if user already exists
-        const existingUser = await User.findOne({
+        const existingUser = await user.findOne({
             $or: [{ email }, { username }]
         });
 
@@ -139,7 +139,7 @@ router.post('/register', authLimiter, registerValidation, async (req, res) => {
         }
 
         // Create user
-        const user = await User.create({
+        const user = await user.create({
             username,
             email,
             password,
