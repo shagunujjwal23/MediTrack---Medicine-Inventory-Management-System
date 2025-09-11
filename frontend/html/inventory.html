@@ -11,6 +11,7 @@
 
 <body>
   <div class="container">
+    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <h2>💊 MediTrack</h2>
@@ -42,11 +43,42 @@
       </div>
     </aside>
 
+    <!-- Main Content -->
     <main class="main-content">
-      <h1>Medicine Inventory</h1>
+      <div class="header-card">
+        <h1>Medicine Inventory</h1>
+      </div>
 
+      <!-- Inventory Summary (Quick Stats) -->
+      <div class="inventory-summary">
+        <div class="summary-card blue">
+          <i class="fas fa-pills"></i>
+          <span id="totalMedicines">Total Medicines: 0</span>
+        </div>
+
+        <div class="summary-card purple">
+          <i class="fas fa-boxes"></i>
+          <span id="totalStock">Total Stock: 0</span>
+        </div>
+
+        <div class="summary-card green">
+          <i class="fas fa-rupee-sign"></i>
+          <span id="totalValue">Total Value: ₹0</span>
+        </div>
+
+        <div class="summary-card orange">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span id="lowStock">Low Stock: 0</span>
+        </div>
+
+        <div class="summary-card red">
+          <i class="fas fa-calendar-times"></i>
+          <span id="expiredStock">Expired: 0</span>
+        </div>
+      </div>
+
+      <!-- Filter Section -->
       <div class="filter-section">
-        <!-- Left Side - Title -->
         <div class="filter-text">
           <i class="fas fa-filter"></i>
           <div>
@@ -55,12 +87,10 @@
           </div>
         </div>
 
-        <!-- Search Bar -->
         <div class="search-bar">
           <input type="text" placeholder="Search medicines..." id="searchInput" />
         </div>
 
-        <!-- Right Side - Filters -->
         <div class="filter-options">
           <select id="categoryFilter" class="filter-select">
             <option value="">All Categories</option>
@@ -95,69 +125,38 @@
         </div>
       </div>
 
-      <div class="inventory-summary">
-        <!-- General Overview -->
-        <div class="summary-card blue">
-          <i class="fas fa-pills"></i>
-          <span id="totalMedicines">Total Medicines: 0</span>
-        </div>
-
-        <div class="summary-card purple">
-          <i class="fas fa-boxes"></i>
-          <span id="totalStock">Total Stock: 0</span>
-        </div>
-
-        <div class="summary-card green">
-          <i class="fas fa-rupee-sign"></i>
-          <span id="totalValue">Total Value: ₹0</span>
-        </div>
-
-        <!-- Alerts -->
-        <div class="summary-card orange">
-          <i class="fas fa-exclamation-triangle"></i>
-          <span id="lowStock">Low Stock: 0</span>
-        </div>
-
-        <div class="summary-card red">
-          <i class="fas fa-calendar-times"></i>
-          <span id="expiredStock">Expired: 0</span>
-        </div>
-
+      <!-- Inventory Table -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Manufacturer</th>
+              <th>Category</th>
+              <th>Batch</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Expiry</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryBody">
+            <!-- Dynamic Rows via JS -->
+          </tbody>
+        </table>
       </div>
 
-      <div class="inventory-table">
-        <div class="inventory-table">
-          <!-- Add wrapper here -->
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Manufacturer</th>
-                  <th>Category</th>
-                  <th>Batch</th>
-                  <th>Quantity</th>
-                  <th>Price</th>
-                  <th>Expiry</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="inventoryBody">
-                <!-- Data injected by JS -->
-              </tbody>
-            </table>
-          </div>
-        </div>
+      <!-- Medicine Description -->
+      <div id="medicineDescriptionBox" class="description-box"
+        style="display: none; margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
+        <h3 id="descMedicineName">Medicine Name</h3>
+        <p id="descMedicineText">Description will appear here...</p>
+      </div>
+    </main>
+  </div>
 
-        <div id="medicineDescriptionBox" class="description-box"
-          style="display: none; margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
-          <h3 id="descMedicineName">Medicine Name</h3>
-          <p id="descMedicineText">Description will appear here...</p>
-        </div>
-
-
-        <script src="../js/inventory.js"></script>
+  <script src="../js/inventory.js"></script>
 </body>
 
 </html>

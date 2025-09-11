@@ -209,12 +209,12 @@ function renderInventoryTable(medicines) {
 
     if (daysUntilExpiry <= 0) {
       status = "Expired";
-      statusClass = "status-expired";
+      statusClass = "status-expired";  // Expired
       rowClass = "expired-row";
       expiredCount++;
     } else if (daysUntilExpiry <= 30) {
       status = "Expiring Soon";
-      statusClass = "status-soon";
+      statusClass = "status-soon";     // Expiring Soon
       rowClass = "expiring-row";
     }
 

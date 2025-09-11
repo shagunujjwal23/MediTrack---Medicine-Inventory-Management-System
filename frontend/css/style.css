@@ -4296,3 +4296,41 @@ table th:last-child {
     min-width: 100%;
   }
 }
+
+/* ✅ Distinct colors */
+.status-expired {
+  color: #e53935; /* Red for expired */
+  font-weight: bold;
+}
+
+.status-low-stock {
+  color: #ff9800; /* Orange for low stock */
+  font-weight: bold;
+}
+
+.status-soon {
+  color: #fdd835; /* Yellow for expiring soon */
+  font-weight: bold;
+}
+
+.status-valid {
+  color: #43a047; /* Green for valid */
+  font-weight: bold;
+}
+
+/* ===== Header Card Style ===== */
+.header-card {
+  background: #f8f9fa;
+  padding: 15px 25px;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 25px;
+}
+
+.header-card h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #2c3e50;
+  font-weight: 700;
+}
