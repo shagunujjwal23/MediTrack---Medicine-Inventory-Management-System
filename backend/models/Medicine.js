@@ -9,7 +9,8 @@ const medicineSchema = new mongoose.Schema({
   price: { type: Number, required: true },      // Price per unit
   expiryDate: { type: Date, required: true },   // Expiry date
   manufacturer: { type: String, default: 'N/A' }, // Default manufacturer
-  purchaseDate: { type: Date, default: Date.now } // When the stock was purchased
+  purchaseDate: { type: Date, default: Date.now }, // When the stock was purchased
+  description: { type: String, default: '' }     // ✅ New description field
 }, { timestamps: true }); // Automatically adds createdAt & updatedAt
 
 module.exports = mongoose.model('Medicine', medicineSchema);

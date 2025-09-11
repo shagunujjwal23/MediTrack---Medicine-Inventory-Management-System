@@ -130,6 +130,7 @@ async function loadInventory() {
     const medicines = await res.json();
 
     localStorage.setItem("medicines", JSON.stringify(medicines));
+    populateFilters(medicines);
 
     renderInventoryTable(medicines);
 
@@ -137,49 +138,71 @@ async function loadInventory() {
     console.error("Error loading inventory:", err);
 
     const medicines = JSON.parse(localStorage.getItem("medicines")) || [];
+    populateFilters(medicines);
     renderInventoryTable(medicines);
   }
 }
 
-function renderInventoryTable(medicines) {
-  const tbody = document.getElementById("inventoryBody");
+function populateFilters(medicines) {
   const categoryFilter = document.getElementById("categoryFilter");
-
-  tbody.innerHTML = "";
-
-  // Populate Manufacturer Filter
   const manufacturerFilter = document.getElementById("manufacturerFilter");
-  if (manufacturerFilter) {
-    const manufacturers = [...new Set(medicines.map(med => med.manufacturer).filter(Boolean))];
-    manufacturerFilter.innerHTML = '<option value="">All Manufacturers</option>';
-    manufacturers.forEach(m => {
-      manufacturerFilter.innerHTML += `<option value="${m}">${m}</option>`;
-    });
-  }
 
-  // Populate Category Filter
-  const categories = [...new Set(medicines.map(med => med.category).filter(Boolean))];
+  // Clear old options
   categoryFilter.innerHTML = '<option value="">All Categories</option>';
+  manufacturerFilter.innerHTML = '<option value="">All Manufacturers</option>';
+
+  // Collect unique values
+  const categories = [...new Set(medicines.map(m => m.category || 'General'))];
+  const manufacturers = [...new Set(medicines.map(m => m.manufacturer || 'Unknown'))];
+
+  // Populate categories
   categories.forEach(category => {
-    categoryFilter.innerHTML += `<option value="${category}">${category}</option>`;
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categoryFilter.appendChild(option);
   });
 
-  // If no medicines found
+  // Populate manufacturers
+  manufacturers.forEach(manufacturer => {
+    const option = document.createElement("option");
+    option.value = manufacturer;
+    option.textContent = manufacturer;
+    manufacturerFilter.appendChild(option);
+  });
+}
+
+function renderInventoryTable(medicines) {
+  const tbody = document.getElementById("inventoryBody");
+  tbody.innerHTML = "";
+
+  // Show "No Medicines" message if empty
   if (medicines.length === 0) {
     tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px; color:#666;">No medicines in inventory</td></tr>';
+    document.getElementById("totalStock").textContent = "Total Stock: 0";
+    document.getElementById("totalMedicines").textContent = "Total Medicines: 0";
+    document.getElementById("expiredStock").textContent = "Expired: 0";
+    document.getElementById("lowStock").textContent = "Low Stock: 0";
+    document.getElementById("totalValue").textContent = "Total Value: ₹0";
     return;
   }
 
+  // === Counters for summary ===
   let totalStock = 0;
+  let totalMedicines = 0;
   let expiredCount = 0;
   let lowStockCount = 0;
   let totalValue = 0;
+
   const today = new Date();
 
   medicines.forEach((med, index) => {
     const expDate = new Date(med.expiryDate || med.expiry);
     const daysUntilExpiry = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
 
+    // ===============================
+    // Status: Valid / Expiring Soon / Expired
+    // ===============================
     let status = "Valid";
     let statusClass = "status-valid";
     let rowClass = "valid-row";
@@ -195,10 +218,11 @@ function renderInventoryTable(medicines) {
       rowClass = "expiring-row";
     }
 
-    // Extract threshold based on unit
+    // ===============================
+    // Low Stock Detection
+    // ===============================
     const unit = med.unit ? med.unit.toLowerCase() : "pack";
-    const threshold = unitThresholds[unit] || 2;
-
+    const threshold = unitThresholds[unit] || 2; // default threshold = 2
     if (med.quantity <= threshold) {
       lowStockCount++;
       if (status === "Valid") {
@@ -208,17 +232,27 @@ function renderInventoryTable(medicines) {
       }
     }
 
-    totalStock += parseInt(med.quantity);
-    totalValue += (med.quantity * med.price);
+    // ===============================
+    // Totals
+    // ===============================
+    totalStock += parseInt(med.quantity); // total number of units
+    totalMedicines++;                      // total distinct medicines
+    totalValue += med.quantity * med.price;
 
+    // ===============================
+    // Table Row
+    // ===============================
     const row = document.createElement("tr");
-    row.className = rowClass;
+    row.className = rowClass + " medicine-row";
     row.innerHTML = `
-      <td><strong>${med.name}</strong></td>
+      <td class="toggle-cell">
+        <span class="arrow">&#9654;</span>
+        <span class="medicine-name"><strong>${med.name}</strong></span>
+      </td>
       <td>${med.manufacturer || 'N/A'}</td>
       <td><span class="category-badge">${med.category || 'General'}</span></td>
       <td>${med.batchNo || med.batch}</td>
-      <td>${med.quantity} ${med.unit}</td>
+      <td class="quantity-cell">${med.quantity} ${med.unit}</td>
       <td>₹${med.price.toFixed(2)}</td>
       <td>${expDate.toLocaleDateString()}</td>
       <td><span class="${statusClass}">${status}</span></td>
@@ -228,14 +262,69 @@ function renderInventoryTable(medicines) {
       </td>
     `;
     tbody.appendChild(row);
+
+    // ===============================
+    // Description Row (hidden initially)
+    // ===============================
+    const descRow = document.createElement("tr");
+    descRow.className = "description-row";
+    descRow.style.display = "none";
+    descRow.innerHTML = `
+      <td colspan="9" style="background:#f9f9f9; padding:10px; border-top:1px solid #ddd;">
+        <strong>Description:</strong> ${med.description?.trim() || "No description available"}
+      </td>
+    `;
+    tbody.appendChild(descRow);
+
+    row.querySelector(".toggle-cell").addEventListener("click", () => {
+      const isOpen = descRow.style.display === "table-row";
+
+      // Close all other rows first
+      document.querySelectorAll(".description-row").forEach(r => r.style.display = "none");
+      document.querySelectorAll(".medicine-row").forEach(r => {
+        r.classList.remove("active-row");
+        const arrow = r.querySelector(".arrow");
+        if (arrow) arrow.classList.remove("rotated");
+      });
+
+      if (!isOpen) {
+        descRow.style.display = "table-row";
+        row.classList.add("active-row");
+
+        const arrow = row.querySelector(".arrow");
+        if (arrow) arrow.classList.add("rotated"); // ✅ Rotate arrow
+      }
+    });
   });
 
-  document.getElementById('totalStock').textContent = `Total Stock: ${totalStock}`;
-  document.getElementById('expiredStock').textContent = `Expired: ${expiredCount}`;
-  document.getElementById('lowStock').textContent = `Low Stock: ${lowStockCount}`;
-  document.getElementById('totalValue').textContent = `Total Value: ₹${totalValue.toFixed(2)}`;
+  // ===============================
+  // Update Summary Cards
+  // ===============================
+  document.getElementById("totalStock").textContent = `Total Stock: ${totalStock}`;
+  document.getElementById("totalMedicines").textContent = `Total Medicines: ${totalMedicines}`;
+  document.getElementById("expiredStock").textContent = `Expired: ${expiredCount}`;
+  document.getElementById("lowStock").textContent = `Low Stock: ${lowStockCount}`;
+  document.getElementById("totalValue").textContent = `Total Value: ₹${totalValue.toFixed(2)}`;
 
+  // ===============================
+  // Apply Filters (if active)
+  // ===============================
   filterInventory();
+}
+
+function showDescriptionModal(med) {
+  const modal = document.createElement("div");
+  modal.className = "desc-modal";
+  modal.innerHTML = `
+    <div class="desc-content">
+      <h3>${med.name}</h3>
+      <p>${med.description || "No description available."}</p>
+      <button id="closeModal">Close</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  document.getElementById("closeModal").onclick = () => modal.remove();
 }
 
 // =========================
@@ -413,3 +502,17 @@ async function deleteMedicine(index) {
     }
   }
 }
+
+// =========================
+// Modal close setup
+// =========================
+document.getElementById("closeModal").addEventListener("click", () => {
+  document.getElementById("descriptionModal").style.display = "none";
+});
+
+window.addEventListener("click", (e) => {
+  if (e.target.id === "descriptionModal") {
+    document.getElementById("descriptionModal").style.display = "none";
+  }
+});
+

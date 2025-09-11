@@ -45,79 +45,119 @@
     <main class="main-content">
       <h1>Medicine Inventory</h1>
 
-      <div class="inventory-controls">
-        <!-- Search -->
-        <input type="text" id="searchInput" placeholder="Search medicines..." class="search-box">
+      <div class="filter-section">
+        <!-- Left Side - Title -->
+        <div class="filter-text">
+          <i class="fas fa-filter"></i>
+          <div>
+            <h3>Filter Medicines</h3>
+            <p>Search and filter medicines by category, status, or manufacturer.</p>
+          </div>
+        </div>
 
-        <!-- Category Filter -->
-        <select id="categoryFilter" class="filter-select">
-          <option value="">All Categories</option>
-        </select>
+        <!-- Search Bar -->
+        <div class="search-bar">
+          <input type="text" placeholder="Search medicines..." id="searchInput" />
+        </div>
 
-        <!-- Status Filter -->
-        <select id="statusFilter" class="filter-select">
-          <option value="">All Status</option>
-          <option value="valid">Valid</option>
-          <option value="expiring">Expiring Soon</option>
-          <option value="expired">Expired</option>
-          <option value="low-stock">Low Stock</option>
-        </select>
+        <!-- Right Side - Filters -->
+        <div class="filter-options">
+          <select id="categoryFilter" class="filter-select">
+            <option value="">All Categories</option>
+          </select>
 
-        <!-- Manufacturer Filter -->
-        <select id="manufacturerFilter" class="filter-select">
-          <option value="">All Manufacturers</option>
-        </select>
+          <select id="statusFilter" class="filter-select">
+            <option value="">All Status</option>
+            <option value="valid">Valid</option>
+            <option value="expiring">Expiring Soon</option>
+            <option value="expired">Expired</option>
+            <option value="low-stock">Low Stock</option>
+          </select>
 
-        <!-- Stock Level Filter -->
-        <select id="stockFilter" class="filter-select">
-          <option value="">All Stock</option>
-          <option value="low">Low Stock (≤2)</option>
-          <option value="medium">Medium (3–10)</option>
-          <option value="high">High (>10)</option>
-        </select>
+          <select id="manufacturerFilter" class="filter-select">
+            <option value="">All Manufacturers</option>
+          </select>
 
-        <!-- Sort By -->
-        <select id="sortFilter" class="filter-select">
-          <option value="">Sort By</option>
-          <option value="name">Name (A–Z)</option>
-          <option value="expiry">Expiry Date</option>
-          <option value="price">Price (Low → High)</option>
-          <option value="price-desc">Price (High → Low)</option>
-        </select>
+          <select id="stockFilter" class="filter-select">
+            <option value="">All Stock</option>
+            <option value="low">Low Stock (≤2)</option>
+            <option value="medium">Medium (3–10)</option>
+            <option value="high">High (>10)</option>
+          </select>
+
+          <select id="sortFilter" class="filter-select">
+            <option value="">Sort By</option>
+            <option value="name">Name (A–Z)</option>
+            <option value="expiry">Expiry Date</option>
+            <option value="price">Price (Low → High)</option>
+            <option value="price-desc">Price (High → Low)</option>
+          </select>
+        </div>
       </div>
 
-      <!-- ✅ SUMMARY CARDS OUTSIDE -->
       <div class="inventory-summary">
-        <div class="summary-card blue" id="totalStock">Total Stock: 0</div>
-        <div class="summary-card red" id="expiredStock">Expired: 0</div>
-        <div class="summary-card orange" id="lowStock">Low Stock: 0</div>
-        <div class="summary-card green" id="totalValue">Total Value: ₹0</div>
+        <!-- General Overview -->
+        <div class="summary-card blue">
+          <i class="fas fa-pills"></i>
+          <span id="totalMedicines">Total Medicines: 0</span>
+        </div>
+
+        <div class="summary-card purple">
+          <i class="fas fa-boxes"></i>
+          <span id="totalStock">Total Stock: 0</span>
+        </div>
+
+        <div class="summary-card green">
+          <i class="fas fa-rupee-sign"></i>
+          <span id="totalValue">Total Value: ₹0</span>
+        </div>
+
+        <!-- Alerts -->
+        <div class="summary-card orange">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span id="lowStock">Low Stock: 0</span>
+        </div>
+
+        <div class="summary-card red">
+          <i class="fas fa-calendar-times"></i>
+          <span id="expiredStock">Expired: 0</span>
+        </div>
+
       </div>
 
       <div class="inventory-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Manufacturer</th>
-              <th>Category</th>
-              <th>Batch</th>
-              <th>Quantity</th>
-              <th>Price</th>
-              <th>Expiry</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="inventoryBody">
-            <!-- Data injected by JS -->
-          </tbody>
-        </table>
-      </div>
-    </main>
-  </div>
+        <div class="inventory-table">
+          <!-- Add wrapper here -->
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Manufacturer</th>
+                  <th>Category</th>
+                  <th>Batch</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Expiry</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryBody">
+                <!-- Data injected by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-  <script src="../js/inventory.js"></script>
+        <div id="medicineDescriptionBox" class="description-box"
+          style="display: none; margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
+          <h3 id="descMedicineName">Medicine Name</h3>
+          <p id="descMedicineText">Description will appear here...</p>
+        </div>
+
+
+        <script src="../js/inventory.js"></script>
 </body>
 
 </html>

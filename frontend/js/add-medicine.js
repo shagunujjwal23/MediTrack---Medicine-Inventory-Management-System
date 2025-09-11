@@ -243,6 +243,7 @@ document.getElementById("medicineForm").addEventListener("submit", function (e) 
         expiryDate: document.getElementById("expiryDate").value,
         manufacturer: document.getElementById("manufacturer")?.value || 'N/A',
         purchaseDate: document.getElementById("purchaseDate").value,
+        description: document.getElementById("description").value,
         id: Date.now().toString() // Add unique ID for better tracking
     };
 
