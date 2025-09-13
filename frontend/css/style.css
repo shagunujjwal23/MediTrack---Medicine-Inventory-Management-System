@@ -4334,3 +4334,486 @@ table th:last-child {
   color: #2c3e50;
   font-weight: 700;
 }
+
+/* Dashboard export button */
+.export-btn {
+  background: #2b7cff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-left: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+.export-btn i { font-size: 14px; }
+
+/* Alerts container */
+.dashboard-alerts {
+  margin: 14px 0;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alert-card {
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.alert-card.danger {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.alert-card.warning {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.alert-card a {
+  color: inherit;
+  text-decoration: underline;
+  margin-left: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* ===== Summary Section Layout ===== */
+.summary-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Always 3 cards in a row */
+  gap: 25px; /* space between cards */
+  margin: 25px auto;
+  max-width: 1100px; /* total area width */
+  justify-items: center;
+  padding: 10px;
+}
+
+/* ===== Summary Cards ===== */
+.summary-card {
+  width: 100%;
+  max-width: 300px; /* bigger cards */
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px 15px;
+  text-align: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s ease-in-out;
+  border: 1px solid #f1f1f1;
+  min-height: 180px; /* taller card */
+}
+
+.summary-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== Icon Styling ===== */
+.summary-card i {
+  font-size: 2.2rem; /* bigger icon */
+  margin-bottom: 12px;
+  display: inline-block;
+  padding: 10px;
+  border-radius: 50%;
+}
+
+/* ===== Text Styling ===== */
+.summary-card p {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 6px 0;
+}
+
+.summary-card .description {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.summary-card h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #0f172a;
+  margin-top: 6px;
+}
+
+/* ===== Color Themes ===== */
+.summary-card.blue {
+  background: #E3F2FD;
+}
+.summary-card.blue i {
+  background: #BBDEFB;
+  color: #1565C0;
+}
+
+.summary-card.purple {
+  background: #F3E5F5;
+}
+.summary-card.purple i {
+  background: #E1BEE7;
+  color: #7B1FA2;
+}
+
+.summary-card.green {
+  background: #E8F5E9;
+}
+.summary-card.green i {
+  background: #C8E6C9;
+  color: #2E7D32;
+}
+
+.summary-card.orange {
+  background: #FFF3E0;
+}
+.summary-card.orange i {
+  background: #FFE0B2;
+  color: #EF6C00;
+}
+
+.summary-card.red {
+  background: #FFEBEE;
+}
+.summary-card.red i {
+  background: #FFCDD2;
+  color: #C62828;
+}
+
+.summary-card.yellow {
+  background: #FFFDE7;
+}
+.summary-card.yellow i {
+  background: #FFF9C4;
+  color: #F9A825;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 1024px) {
+  .summary-section {
+    grid-template-columns: repeat(2, 1fr); /* 2 per row on medium screens */
+  }
+}
+
+@media (max-width: 640px) {
+  .summary-section {
+    grid-template-columns: 1fr; /* stack vertically on small screens */
+  }
+}
+
+/* ===== Notification Bell ===== */
+.notification-wrapper {
+  position: relative;
+  margin-right: 15px;
+}
+
+.notification-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  position: relative;
+  color: #555;
+  transition: color 0.3s ease;
+}
+
+.notification-btn:hover {
+  color: #007bff;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ff4757;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 3px 6px;
+}
+
+/* ===== Notification Dropdown ===== */
+.notification-panel {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  width: 280px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: none;
+  z-index: 999;
+}
+
+.notification-panel.active {
+  display: block;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Header Actions Wrapper ===== */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Space between bell, refresh, and export */
+  position: relative;
+}
+
+/* ===== Notification Bell ===== */
+.notification-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-btn {
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #f4c542; /* gold bell */
+  border-radius: 50%;
+  padding: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.notification-btn:hover {
+  background: #f8f8f8;
+  transform: scale(1.05);
+}
+
+/* Badge Styling */
+.notification-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #ff4757;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 3px 6px;
+  min-width: 18px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== Notification Dropdown Panel ===== */
+.notification-panel {
+  display: none;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 250px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  z-index: 999;
+}
+
+.notification-panel.show {
+  display: block;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+}
+
+.clear-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.clear-btn:hover {
+  text-decoration: underline;
+}
+
+.notification-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.notification-list li {
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  transition: background 0.3s;
+}
+
+.notification-list li:hover {
+  background: #f1f1f1;
+}
+
+.notification-list .empty-msg {
+  text-align: center;
+  color: #888;
+  padding: 20px 10px;
+}
+
+/* ===== Buttons (Refresh & Export) ===== */
+.refresh-btn,
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.refresh-btn {
+  background: #8b73f6;
+  color: white;
+}
+
+.refresh-btn:hover {
+  background: #715ad1;
+}
+
+.export-btn {
+  background: #007bff;
+  color: white;
+}
+
+.export-btn:hover {
+  background: #005dc1;
+}
+
+/* Color Variations - Solid Colors */
+.inventory-page .summary-card.blue {
+  background-color: #3498db; /* Bright Blue */
+  color: #ffffff;
+}
+
+.inventory-page .summary-card.purple {
+  background-color: #9b59b6; /* Purple */
+  color: #ffffff;
+}
+
+.inventory-page .summary-card.green {
+  background-color: #27ae60; /* Green */
+  color: #ffffff;
+}
+
+.inventory-page .summary-card.orange {
+  background-color: #e67e22; /* Orange */
+  color: #ffffff;
+}
+
+.inventory-page .summary-card.red {
+  background-color: #e74c3c; /* Red */
+  color: #ffffff;
+}
+
+/* Reduce the summary card height only */
+.inventory-page .summary-card {
+  height: 80px; /* Adjust as needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* =======================
+   Recent Activity Section
+========================== */
+.activity-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 12px;
+  transition: transform 0.2s ease;
+}
+
+.activity-item:hover {
+  transform: translateY(-2px);
+}
+
+/* Icon on the left */
+.activity-icon {
+  background: #f0f4ff;
+  color: #4a6cf7;
+  font-size: 18px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.activity-content p {
+  font-weight: 500;
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.activity-content small {
+  font-size: 12px;
+  color: #777;
+}
+
+/* =======================
+   Minimal Delete Button
+========================== */
+.delete-btn {
+  background: none; /* no background circle */
+  color: #e63946; /* red icon color */
+  border: none;
+  font-size: 16px; /* adjust icon size */
+  cursor: pointer;
+  transition: color 0.25s ease, transform 0.2s ease;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* remove extra space */
+}
+
+.delete-btn:hover {
+  color: #b71c1c; /* darker red on hover */
+  transform: scale(1.2); /* subtle zoom effect */
+}
+

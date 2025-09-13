@@ -58,6 +58,44 @@ router.get('/expiry-status', async (req, res) => {
     }
 });
 
+// =========================
+// Update a medicine by ID (PUT)
+// =========================
+router.put('/:id', async (req, res) => {
+  try {
+    const { name, manufacturer, category, batchNo, quantity, price, expiryDate, description } = req.body;
+
+    // Validate if at least one field is provided
+    if (!name && !manufacturer && !category && !batchNo && quantity === undefined && price === undefined && !expiryDate && !description) {
+      return res.status(400).json({ success: false, message: "No update data provided" });
+    }
+
+    const updatedMedicine = await Medicine.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        manufacturer,
+        category,
+        batchNo,
+        quantity,
+        price,
+        expiryDate,
+        description
+      },
+      { new: true, runValidators: true } // return updated document & validate
+    );
+
+    if (!updatedMedicine) {
+      return res.status(404).json({ success: false, message: "Medicine not found" });
+    }
+
+    res.json({ success: true, data: updatedMedicine });
+  } catch (err) {
+    console.error("Error updating medicine:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // Delete a medicine by ID
 router.delete('/:id', async (req, res) => {
     try {

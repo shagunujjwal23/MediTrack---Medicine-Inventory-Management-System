@@ -212,7 +212,7 @@ function renderInventoryTable(medicines) {
       statusClass = "status-expired";  // Expired
       rowClass = "expired-row";
       expiredCount++;
-    } else if (daysUntilExpiry <= 30) {
+    } else if (daysUntilExpiry <= 90) {
       status = "Expiring Soon";
       statusClass = "status-soon";     // Expiring Soon
       rowClass = "expiring-row";
@@ -457,15 +457,62 @@ function filterInventory() {
 // =========================
 // Edit and Delete
 // =========================
-function editMedicine(index) {
+async function editMedicine(index) {
   const medicines = JSON.parse(localStorage.getItem("medicines")) || [];
   const medicine = medicines[index];
 
-  const newQuantity = prompt(`Edit quantity for ${medicine.name}:`, medicine.quantity);
-  if (newQuantity && !isNaN(newQuantity) && newQuantity > 0) {
-    medicines[index].quantity = parseInt(newQuantity);
-    localStorage.setItem("medicines", JSON.stringify(medicines));
-    loadInventory();
+  if (!medicine || !medicine._id) {
+    alert("Medicine ID missing. Cannot edit.");
+    return;
+  }
+
+  // Step 1: Confirm edit
+  const confirmEdit = confirm(`Are you sure you want to edit ${medicine.name}?`);
+  if (!confirmEdit) return;
+
+  // Step 2: Ask for quantity
+  const newQuantity = prompt(`Enter new quantity for ${medicine.name}:`, medicine.quantity);
+  if (newQuantity === null) return; // Cancel → stop
+  if (isNaN(newQuantity) || parseInt(newQuantity) <= 0) {
+    alert("Invalid quantity entered.");
+    return;
+  }
+
+  // Step 3: Ask for price
+  const newPrice = prompt(`Enter new price for ${medicine.name}:`, medicine.price);
+  if (newPrice === null) return; // Cancel → stop
+  if (isNaN(newPrice) || parseFloat(newPrice) <= 0) {
+    alert("Invalid price entered.");
+    return;
+  }
+
+  try {
+    // Step 4: Update backend
+    const res = await fetch(`${API_BASE_URL}/medicines/${medicine._id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        quantity: parseInt(newQuantity),
+        price: parseFloat(newPrice)
+      })
+    });
+
+    const result = await res.json();
+
+    if (res.ok && result.success) {
+      // Update local cache
+      medicines[index].quantity = result.data.quantity;
+      medicines[index].price = result.data.price;
+      localStorage.setItem("medicines", JSON.stringify(medicines));
+
+      alert("Medicine updated successfully.");
+      loadInventory();
+    } else {
+      alert("Failed to update medicine: " + (result.message || result.error));
+    }
+  } catch (err) {
+    console.error("Error updating medicine:", err);
+    alert("An error occurred while updating the medicine.");
   }
 }
 

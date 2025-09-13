@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard - Medicine Inventory</title>
-  <link rel="stylesheet" href="../css/style.css"/>
+  <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
+
 <body>
   <div class="container">
+    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <h2>💊 MediTrack</h2>
@@ -40,7 +43,9 @@
       </div>
     </aside>
 
+    <!-- Main Dashboard -->
     <main class="main-content fade-in">
+
       <!-- Header Section -->
       <div class="dashboard-header">
         <div class="header-content">
@@ -50,70 +55,81 @@
           </h1>
           <p class="dashboard-subtitle">Monitor your medicine inventory at a glance</p>
         </div>
+
+        <!-- Action Buttons + Notification -->
         <div class="header-actions">
+          <!-- Refresh Button -->
           <button class="refresh-btn" onclick="location.reload()">
-            <i class="fas fa-sync-alt"></i>
-            Refresh
+            <i class="fas fa-sync-alt"></i> Refresh
           </button>
+
+          <!-- Export Button -->
+          <button class="export-btn" onclick="exportReport()">
+            <i class="fas fa-file-export"></i> Export Report
+          </button>
+
+          <!-- Notification Bell -->
+          <div class="notification-wrapper">
+            <button class="notification-btn" id="notificationBtn">
+              <i class="fas fa-bell"></i>
+              <span class="notification-badge" id="notificationBadge">0</span>
+            </button>
+            <!-- Notification Dropdown Panel -->
+            <div class="notification-panel" id="notificationPanel">
+              <div class="panel-header">
+                <h4>Notifications</h4>
+                <button class="clear-btn" onclick="clearNotifications()">Clear All</button>
+              </div>
+              <ul class="notification-list" id="notificationList">
+                <li class="empty-msg">No new notifications</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Stats Cards -->
-      <div class="stats-grid slide-up">
-        <div class="stat-card primary">
-          <div class="stat-icon">
-            <i class="fas fa-pills"></i>
-          </div>
-          <div class="stat-content">
-            <h3 id="totalMedicines">0</h3>
-            <p>Total Medicines</p>
-            <span class="stat-trend">
-              <i class="fas fa-arrow-up"></i>
-              Items in stock
-            </span>
-          </div>
+      <!-- Summary Cards -->
+      <div class="summary-section">
+        <div class="summary-card blue">
+          <i class="fas fa-pills"></i>
+          <p>Total Medicines</p>
+          <span class="description">Unique medicines available</span>
+          <h3 id="totalMedicines">0</h3>
         </div>
 
-        <div class="stat-card danger">
-          <div class="stat-icon">
-            <i class="fas fa-exclamation-triangle"></i>
-          </div>
-          <div class="stat-content">
-            <h3 id="expiredMedicines">0</h3>
-            <p>Expired</p>
-            <span class="stat-trend">
-              <i class="fas fa-arrow-down"></i>
-              Need attention
-            </span>
-          </div>
+        <div class="summary-card purple">
+          <i class="fas fa-boxes"></i>
+          <p>Total Stock</p>
+          <span class="description">Combined quantity of all medicines</span>
+          <h3 id="totalStock">0</h3>
         </div>
 
-        <div class="stat-card warning">
-          <div class="stat-icon">
-            <i class="fas fa-battery-quarter"></i>
-          </div>
-          <div class="stat-content">
-            <h3 id="lowStock">0</h3>
-            <p>Low Stock</p>
-            <span class="stat-trend">
-              <i class="fas fa-shopping-cart"></i>
-              Reorder required
-            </span>
-          </div>
+        <div class="summary-card green">
+          <i class="fas fa-rupee-sign"></i>
+          <p>Total Value</p>
+          <span class="description">Total worth of inventory</span>
+          <h3 id="totalValue">₹0</h3>
         </div>
 
-        <div class="stat-card success">
-          <div class="stat-icon">
-            <i class="fas fa-rupee-sign"></i>
-          </div>
-          <div class="stat-content">
-            <h3 id="totalValue">₹0</h3>
-            <p>Total Value</p>
-            <span class="stat-trend">
-              <i class="fas fa-chart-line"></i>
-              Inventory worth
-            </span>
-          </div>
+        <div class="summary-card orange">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>Low Stock</p>
+          <span class="description">Medicines below minimum threshold</span>
+          <h3 id="lowStock">0</h3>
+        </div>
+
+        <div class="summary-card red">
+          <i class="fas fa-calendar-times"></i>
+          <p>Expired</p>
+          <span class="description">Medicines past expiry date</span>
+          <h3 id="expiredMedicines">0</h3>
+        </div>
+
+        <div class="summary-card yellow">
+          <i class="fas fa-hourglass-half"></i>
+          <p>Expiring Soon</p>
+          <span class="description">Will expire within 30 days</span>
+          <h3 id="expiringMedicines">0</h3>
         </div>
       </div>
 
@@ -122,10 +138,7 @@
         <!-- Chart Section -->
         <div class="chart-section">
           <div class="section-header">
-            <h3>
-              <i class="fas fa-chart-pie"></i>
-              Expiry Status Overview
-            </h3>
+            <h3><i class="fas fa-chart-pie"></i> Expiry Status Overview</h3>
             <span class="section-badge">Live Data</span>
           </div>
           <div class="modern-chart" id="expiryChart">
@@ -138,6 +151,7 @@
                 <span class="label-count" id="validCount">0</span>
               </div>
             </div>
+
             <div class="chart-item expiring">
               <div class="chart-bar">
                 <div class="bar-fill" id="expiringBar"></div>
@@ -147,6 +161,7 @@
                 <span class="label-count" id="expiringCount">0</span>
               </div>
             </div>
+
             <div class="chart-item expired">
               <div class="chart-bar">
                 <div class="bar-fill" id="expiredBar"></div>
@@ -162,10 +177,7 @@
         <!-- Recent Activity -->
         <div class="activity-section">
           <div class="section-header">
-            <h3>
-              <i class="fas fa-clock"></i>
-              Recent Activity
-            </h3>
+            <h3><i class="fas fa-clock"></i> Recent Activity</h3>
             <a href="inventory.html" class="view-all-link">View All</a>
           </div>
           <div class="activity-list" id="recentList">
@@ -177,6 +189,9 @@
                 <p>No recent activity</p>
                 <small>Add medicines to see recent changes</small>
               </div>
+              <button class="delete-btn">
+                <i class="fas fa-trash"></i>
+              </button>
             </div>
           </div>
         </div>
@@ -185,10 +200,7 @@
       <!-- Quick Actions -->
       <div class="quick-actions-modern">
         <div class="section-header">
-          <h3>
-            <i class="fas fa-bolt"></i>
-            Quick Actions
-          </h3>
+          <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
           <p>Manage your inventory efficiently</p>
         </div>
         <div class="action-grid">
@@ -235,12 +247,7 @@
     </main>
   </div>
 
-  <ul id="recent-activities">
-  <li id="activity1">Added Paracetamol <button onclick="deleteActivity('activity1')">Delete</button></li>
-  <li id="activity2">Updated stock of Aspirin <button onclick="deleteActivity('activity2')">Delete</button></li>
-</ul>
-
-
   <script src="../js/dashboard.js?v=4"></script>
 </body>
+
 </html>
