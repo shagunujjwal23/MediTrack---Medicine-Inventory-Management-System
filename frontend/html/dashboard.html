@@ -45,7 +45,6 @@
 
     <!-- Main Dashboard -->
     <main class="main-content fade-in">
-
       <!-- Header Section -->
       <div class="dashboard-header">
         <div class="header-content">
@@ -58,32 +57,20 @@
 
         <!-- Action Buttons + Notification -->
         <div class="header-actions">
-          <!-- Refresh Button -->
           <button class="refresh-btn" onclick="location.reload()">
             <i class="fas fa-sync-alt"></i> Refresh
           </button>
 
-          <!-- Export Button -->
           <button class="export-btn" onclick="exportReport()">
             <i class="fas fa-file-export"></i> Export Report
           </button>
-
           <!-- Notification Bell -->
           <div class="notification-wrapper">
-            <button class="notification-btn" id="notificationBtn">
+            <button class="notification-btn" id="notificationBtn" aria-label="Notifications"
+              onclick="openNotificationSidebar()">
               <i class="fas fa-bell"></i>
               <span class="notification-badge" id="notificationBadge">0</span>
             </button>
-            <!-- Notification Dropdown Panel -->
-            <div class="notification-panel" id="notificationPanel">
-              <div class="panel-header">
-                <h4>Notifications</h4>
-                <button class="clear-btn" onclick="clearNotifications()">Clear All</button>
-              </div>
-              <ul class="notification-list" id="notificationList">
-                <li class="empty-msg">No new notifications</li>
-              </ul>
-            </div>
           </div>
         </div>
       </div>
@@ -96,35 +83,30 @@
           <span class="description">Unique medicines available</span>
           <h3 id="totalMedicines">0</h3>
         </div>
-
         <div class="summary-card purple">
           <i class="fas fa-boxes"></i>
           <p>Total Stock</p>
           <span class="description">Combined quantity of all medicines</span>
           <h3 id="totalStock">0</h3>
         </div>
-
         <div class="summary-card green">
           <i class="fas fa-rupee-sign"></i>
           <p>Total Value</p>
           <span class="description">Total worth of inventory</span>
           <h3 id="totalValue">₹0</h3>
         </div>
-
         <div class="summary-card orange">
           <i class="fas fa-exclamation-triangle"></i>
           <p>Low Stock</p>
           <span class="description">Medicines below minimum threshold</span>
           <h3 id="lowStock">0</h3>
         </div>
-
         <div class="summary-card red">
           <i class="fas fa-calendar-times"></i>
           <p>Expired</p>
           <span class="description">Medicines past expiry date</span>
           <h3 id="expiredMedicines">0</h3>
         </div>
-
         <div class="summary-card yellow">
           <i class="fas fa-hourglass-half"></i>
           <p>Expiring Soon</p>
@@ -247,6 +229,39 @@
     </main>
   </div>
 
+  <!-- Overlay -->
+  <div class="notification-overlay" id="notificationOverlay" onclick="closeNotificationSidebar()"></div>
+
+  <!-- Right Sidebar -->
+  <div class="notification-sidebar" id="notificationSidebar">
+    <div class="notification-sidebar-header">
+      <h2>Notifications</h2>
+      <button class="close-sidebar-btn" onclick="closeNotificationSidebar()">&times;</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="notif-sidebar-filters">
+      <button class="notif-sidebar-filter-btn" onclick="filterNotifications('all')">All</button>
+      <button class="notif-sidebar-filter-btn" onclick="filterNotifications('unread')">Unread</button>
+      <button class="notif-sidebar-filter-btn" onclick="filterNotifications('read')">Read</button>
+      <button class="clear-all-btn" onclick="clearAllNotifications()">Clear All</button>
+    </div>
+
+    <!-- ✅ Scrollable Section -->
+    <div class="notif-scrollable-content">
+      <ul class="sidebar-notif-list" id="sidebarNotifList">
+        <!-- Notifications will load here dynamically -->
+      </ul>
+    </div>
+
+    <!-- Notification List -->
+    <ul class="sidebar-notif-list" id="sidebarNotifList">
+      <!-- Notifications will load here dynamically -->
+    </ul>
+  </div>
+
+
+  <!-- ✅ Script is now correctly placed here -->
   <script src="../js/dashboard.js?v=4"></script>
 </body>
 

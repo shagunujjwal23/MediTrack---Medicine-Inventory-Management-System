@@ -1,15 +1,5 @@
 const API_BASE_URL = 'http://localhost:5000/api';
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadDashboardData();
-
-  // Event: Export button
-  const exportBtn = document.getElementById("exportBtn");
-  if (exportBtn) {
-    exportBtn.addEventListener("click", exportReport);
-  }
-});
-
 // ===============================
 // 0) Stock Thresholds per Unit
 // ===============================
@@ -97,7 +87,7 @@ function processMedicineData(medicines) {
     }
 
     // ============================
-    // Low Stock Detection (Exact Logic From inventory.js)
+    // Low Stock Detection
     // ============================
     const unit = med.unit ? med.unit.toLowerCase() : "pack";
     const threshold = unitThresholds[unit] || 2; // Default threshold = 2
@@ -208,14 +198,11 @@ async function loadRecentActivity(data, limit = 5) {
 }
 
 // ===============================
-// 5) Delete Activity (only from dashboard log)
+// 5) Delete Activity
 // ===============================
 function deleteActivity(activityId) {
   if (!confirm("Are you sure you want to remove this activity from the log?")) return;
-
-  // Just remove from dashboard recent activity list
   document.getElementById(activityId)?.remove();
-
   alert("Activity removed from dashboard log!");
 }
 
@@ -263,8 +250,129 @@ function updateExpiryChart(valid, expiring, expired, total) {
   document.getElementById("expiringBar").style.width = `${expiringPercent}%`;
   document.getElementById("expiredBar").style.width = `${expiredPercent}%`;
 
-  // Tooltips
   document.getElementById("validBar").title = `${valid} medicines (${validPercent.toFixed(1)}%)`;
   document.getElementById("expiringBar").title = `${expiring} medicines (${expiringPercent.toFixed(1)}%)`;
   document.getElementById("expiredBar").title = `${expired} medicines (${expiredPercent.toFixed(1)}%)`;
 }
+
+// ===============================
+// 8) Notifications Section
+// ===============================
+const NOTIF_API_URL = `${API_BASE_URL}/notifications`;
+
+async function loadNotifications() {
+  try {
+    const res = await fetch(NOTIF_API_URL);
+    const json = await res.json();
+
+    const notifications = json.data || [];
+    renderNotifications(notifications);
+    updateBadgeCount(notifications);
+  } catch (err) {
+    console.error("Error loading notifications:", err);
+  }
+}
+
+function renderNotifications(notifications) {
+  const list = document.getElementById("sidebarNotifList");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  if (!notifications.length) {
+    list.innerHTML = `<li class="no-notifications">No new notifications</li>`;
+    return;
+  }
+
+  notifications.forEach((notif) => {
+    const li = document.createElement("li");
+    li.className = notif.read ? "read" : "unread";
+    li.innerHTML = `
+      <span>${notif.message}</span>
+      <small>${formatDateTime(notif.createdAt)}</small>
+    `;
+    li.onclick = () => markNotificationAsRead(notif._id);
+    list.appendChild(li);
+  });
+}
+
+function updateBadgeCount(notifications) {
+  const unreadCount = notifications.filter(n => !n.read).length;
+  const badge = document.getElementById("notificationBadge");
+  if (!badge) return;
+
+  badge.style.display = unreadCount > 0 ? "inline-block" : "none";
+  badge.textContent = unreadCount;
+}
+
+async function markNotificationAsRead(id) {
+  try {
+    await fetch(`${NOTIF_API_URL}/${id}/read`, { method: "PATCH" });
+    loadNotifications();
+  } catch (err) {
+    console.error("Error marking notification as read:", err);
+  }
+}
+
+async function clearAllNotifications() {
+  if (!confirm("Are you sure you want to clear all notifications?")) return;
+  try {
+    await fetch(`${NOTIF_API_URL}/clear`, { method: "DELETE" });
+    await loadNotifications();
+  } catch (err) {
+    console.error("Error clearing notifications:", err);
+  }
+}
+
+function filterNotifications(filter) {
+  const items = document.querySelectorAll("#sidebarNotifList li");
+  items.forEach(item => {
+    if (filter === "all") {
+      item.style.display = "flex";
+    } else if (filter === "unread") {
+      item.style.display = item.classList.contains("unread") ? "flex" : "none";
+    } else if (filter === "read") {
+      item.style.display = item.classList.contains("read") ? "flex" : "none";
+    }
+  });
+}
+
+function formatDateTime(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleString();
+}
+
+// ===============================
+// 9) Sidebar Open/Close
+// ===============================
+function openNotificationSidebar() {
+  document.getElementById("notificationSidebar").classList.add("open");
+  document.getElementById("notificationOverlay").classList.add("active");
+  document.body.classList.add("no-scroll"); // Lock main dashboard scroll
+  loadNotifications();
+}
+
+function closeNotificationSidebar() {
+  document.getElementById("notificationSidebar").classList.remove("open");
+  document.getElementById("notificationOverlay").classList.remove("active");
+  document.body.classList.remove("no-scroll"); // Unlock dashboard scroll
+}
+
+// ===============================
+// 10) Initialize on Page Load
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+  loadDashboardData();
+
+  // ✅ Notification button (bell icon)
+  const notifBtn = document.getElementById("notificationBtn");
+  if (notifBtn) {
+    notifBtn.addEventListener("click", openNotificationSidebar);
+  }
+
+  // ✅ Clear notifications
+  const clearBtn = document.querySelector(".clear-all-btn");
+  if (clearBtn) {
+    clearBtn.addEventListener("click", clearAllNotifications);
+  }
+});

@@ -1,12 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const Medicine = require('../models/Medicine');
+const Notification = require('../models/Notification'); // ✅ Import Notification model
 
+// =========================
 // Add a new medicine
+// =========================
 router.post('/', async (req, res) => {
     try {
         const newMed = new Medicine(req.body);
         const saved = await newMed.save();
+
+        // ✅ Create notification
+        await Notification.create({
+            message: `New medicine added: ${saved.name}`,
+            type: 'success',
+        });
+
         res.status(201).json(saved);
     } catch (err) {
         console.error('Error saving medicine:', err);
@@ -14,7 +24,9 @@ router.post('/', async (req, res) => {
     }
 });
 
+// =========================
 // Get all medicines
+// =========================
 router.get('/', async (req, res) => {
     try {
         const meds = await Medicine.find().sort({ createdAt: -1 });
@@ -25,7 +37,9 @@ router.get('/', async (req, res) => {
     }
 });
 
+// =========================
 // Get medicines by expiry status
+// =========================
 router.get('/expiry-status', async (req, res) => {
     try {
         const today = new Date();
@@ -33,8 +47,8 @@ router.get('/expiry-status', async (req, res) => {
         const thirtyDaysFromNow = new Date(today.getTime() + (30 * 24 * 60 * 60 * 1000));
 
         const expired = await Medicine.find({ expiryDate: { $lte: today } });
-        const expiringSoon = await Medicine.find({ 
-            expiryDate: { $gt: today, $lte: thirtyDaysFromNow } 
+        const expiringSoon = await Medicine.find({
+            expiryDate: { $gt: today, $lte: thirtyDaysFromNow }
         });
         const valid = await Medicine.find({ expiryDate: { $gt: thirtyDaysFromNow } });
 
@@ -59,50 +73,57 @@ router.get('/expiry-status', async (req, res) => {
 });
 
 // =========================
-// Update a medicine by ID (PUT)
+// Update a medicine by ID
 // =========================
 router.put('/:id', async (req, res) => {
-  try {
-    const { name, manufacturer, category, batchNo, quantity, price, expiryDate, description } = req.body;
+    try {
+        const { name, manufacturer, category, batchNo, quantity, price, expiryDate, description } = req.body;
 
-    // Validate if at least one field is provided
-    if (!name && !manufacturer && !category && !batchNo && quantity === undefined && price === undefined && !expiryDate && !description) {
-      return res.status(400).json({ success: false, message: "No update data provided" });
+        // Validate if at least one field is provided
+        if (!name && !manufacturer && !category && !batchNo && quantity === undefined && price === undefined && !expiryDate && !description) {
+            return res.status(400).json({ success: false, message: "No update data provided" });
+        }
+
+        const updatedMedicine = await Medicine.findByIdAndUpdate(
+            req.params.id,
+            { name, manufacturer, category, batchNo, quantity, price, expiryDate, description },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedMedicine) {
+            return res.status(404).json({ success: false, message: "Medicine not found" });
+        }
+
+        // ✅ Create notification
+        await Notification.create({
+            message: `Medicine updated: ${updatedMedicine.name}`,
+            type: 'info',
+        });
+
+        res.json({ success: true, data: updatedMedicine });
+    } catch (err) {
+        console.error("Error updating medicine:", err);
+        res.status(500).json({ success: false, error: err.message });
     }
-
-    const updatedMedicine = await Medicine.findByIdAndUpdate(
-      req.params.id,
-      {
-        name,
-        manufacturer,
-        category,
-        batchNo,
-        quantity,
-        price,
-        expiryDate,
-        description
-      },
-      { new: true, runValidators: true } // return updated document & validate
-    );
-
-    if (!updatedMedicine) {
-      return res.status(404).json({ success: false, message: "Medicine not found" });
-    }
-
-    res.json({ success: true, data: updatedMedicine });
-  } catch (err) {
-    console.error("Error updating medicine:", err);
-    res.status(500).json({ success: false, error: err.message });
-  }
 });
 
+// =========================
 // Delete a medicine by ID
+// =========================
 router.delete('/:id', async (req, res) => {
     try {
         const deletedMedicine = await Medicine.findByIdAndDelete(req.params.id);
+
         if (!deletedMedicine) {
             return res.status(404).json({ success: false, message: "Medicine not found" });
         }
+
+        // ✅ Create notification
+        await Notification.create({
+            message: `Medicine deleted: ${deletedMedicine.name}`,
+            type: 'warning',
+        });
+
         res.json({ success: true, message: "Medicine deleted successfully" });
     } catch (err) {
         console.error('Error deleting medicine:', err);
