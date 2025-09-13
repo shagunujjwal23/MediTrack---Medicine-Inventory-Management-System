@@ -375,24 +375,24 @@ document.addEventListener("DOMContentLoaded", () => {
   if (clearBtn) {
     clearBtn.addEventListener("click", clearAllNotifications);
   }
-
-  // ✅ Export button
-  const exportBtn = document.getElementById("exportBtn");
-  if (exportBtn) {
-    exportBtn.addEventListener("click", exportReport);
-  }
 });
 
 // ===============================
 // 11) Export Inventory Report
 // ===============================
-async function exportReport() {
+async function exportReport(exportType) {
   try {
-    const exportType = document.getElementById("exportFormat").value;
+    console.log("Export type selected:", exportType);
 
-    // Fetch medicines
     const response = await fetch(`${API_BASE_URL}/medicines`);
+    console.log("Fetch response status:", response.status);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch medicines from server");
+    }
+
     const medicines = await response.json();
+    console.log("Fetched medicines:", medicines);
 
     if (!medicines || medicines.length === 0) {
       alert("No data available to export.");
@@ -406,6 +406,8 @@ async function exportReport() {
     } else if (exportType === "pdf") {
       exportAsPDF(medicines);
     }
+
+    closeExportModal();
   } catch (error) {
     console.error("Export failed:", error);
     alert("Failed to export report. Please try again.");
@@ -465,3 +467,14 @@ function exportAsPDF(data) {
 
   alert("PDF report exported successfully!");
 }
+
+// ======= Open Modal =======
+function openExportModal() {
+  document.getElementById("exportModal").style.display = "flex";
+}
+
+// ======= Close Modal =======
+function closeExportModal() {
+  document.getElementById("exportModal").style.display = "none";
+}
+

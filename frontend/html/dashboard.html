@@ -62,12 +62,7 @@
           </button>
 
           <div class="export-container">
-            <select id="exportFormat" class="export-dropdown">
-              <option value="csv">CSV</option>
-              <option value="excel">Excel</option>
-              <option value="pdf">PDF</option>
-            </select>
-            <button id="exportBtn" class="btn btn-primary">
+            <button id="exportBtn" onclick="openExportModal()">
               <i class="fas fa-file-export"></i> Export Report
             </button>
           </div>
@@ -266,6 +261,28 @@
     <ul class="sidebar-notif-list" id="sidebarNotifList">
       <!-- Notifications will load here dynamically -->
     </ul>
+  </div>
+
+  <!-- Export Modal -->
+  <div class="modal-overlay" id="exportModal">
+    <div class="modal-content">
+      <h3>Select Export Format</h3>
+      <p>Choose the format you want to export your report in:</p>
+
+      <div class="modal-buttons">
+        <button class="format-btn csv" onclick="exportReport('csv')">
+          <i class="fas fa-file-csv"></i> CSV
+        </button>
+        <button class="format-btn excel" onclick="exportReport('excel')">
+          <i class="fas fa-file-excel"></i> Excel
+        </button>
+        <button class="format-btn pdf" onclick="exportReport('pdf')">
+          <i class="fas fa-file-pdf"></i> PDF
+        </button>
+      </div>
+
+      <button class="close-modal" onclick="closeExportModal()">Cancel</button>
+    </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
