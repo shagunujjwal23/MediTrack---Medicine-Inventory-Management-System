@@ -5289,3 +5289,29 @@ table th:last-child {
 body.no-scroll {
   overflow: hidden;
 }
+
+.export-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.export-dropdown {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.btn.btn-primary {
+  background-color: #4caf50;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn.btn-primary:hover {
+  background-color: #45a049;
+}

@@ -65,6 +65,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/api/medicines', require('./routes/medicineRoutes'));
 app.use('/api', require('./routes/userRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes')); // ✅ Notifications
+app.use("/api/reports", require('./routes/reportRoutes'));
 
 // ========================
 // Root route to load dashboard

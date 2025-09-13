@@ -61,9 +61,17 @@
             <i class="fas fa-sync-alt"></i> Refresh
           </button>
 
-          <button class="export-btn" onclick="exportReport()">
-            <i class="fas fa-file-export"></i> Export Report
-          </button>
+          <div class="export-container">
+            <select id="exportFormat" class="export-dropdown">
+              <option value="csv">CSV</option>
+              <option value="excel">Excel</option>
+              <option value="pdf">PDF</option>
+            </select>
+            <button id="exportBtn" class="btn btn-primary">
+              <i class="fas fa-file-export"></i> Export Report
+            </button>
+          </div>
+
           <!-- Notification Bell -->
           <div class="notification-wrapper">
             <button class="notification-btn" id="notificationBtn" aria-label="Notifications"
@@ -260,6 +268,9 @@
     </ul>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 
   <!-- ✅ Script is now correctly placed here -->
   <script src="../js/dashboard.js?v=4"></script>

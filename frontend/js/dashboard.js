@@ -375,4 +375,93 @@ document.addEventListener("DOMContentLoaded", () => {
   if (clearBtn) {
     clearBtn.addEventListener("click", clearAllNotifications);
   }
+
+  // ✅ Export button
+  const exportBtn = document.getElementById("exportBtn");
+  if (exportBtn) {
+    exportBtn.addEventListener("click", exportReport);
+  }
 });
+
+// ===============================
+// 11) Export Inventory Report
+// ===============================
+async function exportReport() {
+  try {
+    const exportType = document.getElementById("exportFormat").value;
+
+    // Fetch medicines
+    const response = await fetch(`${API_BASE_URL}/medicines`);
+    const medicines = await response.json();
+
+    if (!medicines || medicines.length === 0) {
+      alert("No data available to export.");
+      return;
+    }
+
+    if (exportType === "csv") {
+      exportAsCSV(medicines);
+    } else if (exportType === "excel") {
+      exportAsExcel(medicines);
+    } else if (exportType === "pdf") {
+      exportAsPDF(medicines);
+    }
+  } catch (error) {
+    console.error("Export failed:", error);
+    alert("Failed to export report. Please try again.");
+  }
+}
+
+function exportAsCSV(data) {
+  const headers = Object.keys(data[0]);
+  const csvRows = [headers.join(",")];
+
+  data.forEach(item => {
+    const row = headers.map(header => `"${item[header] || ''}"`);
+    csvRows.push(row.join(","));
+  });
+
+  const csvContent = csvRows.join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `inventory_report_${new Date().toISOString().slice(0, 10)}.csv`;
+  link.click();
+
+  alert("CSV report exported successfully!");
+}
+
+function exportAsExcel(data) {
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Inventory Report");
+
+  XLSX.writeFile(workbook, `inventory_report_${new Date().toISOString().slice(0, 10)}.xlsx`);
+
+  alert("Excel report exported successfully!");
+}
+
+function exportAsPDF(data) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Title
+  doc.setFontSize(18);
+  doc.text("Inventory Report", 14, 20);
+
+  // Table data
+  const columns = Object.keys(data[0]);
+  const rows = data.map(item => columns.map(col => item[col] || ""));
+
+  doc.autoTable({
+    head: [columns],
+    body: rows,
+    startY: 30,
+    theme: "grid",
+    styles: { fontSize: 8 },
+  });
+
+  doc.save(`inventory_report_${new Date().toISOString().slice(0, 10)}.pdf`);
+
+  alert("PDF report exported successfully!");
+}
