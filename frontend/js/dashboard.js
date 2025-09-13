@@ -28,12 +28,12 @@ async function loadDashboardData() {
     } = processMedicineData(medicines);
 
     // Update counters
-    animateCounter("totalMedicines", totalMedicines);
-    animateCounter("totalStock", totalStock);
-    animateCounter("expiredMedicines", expiredCount);
-    animateCounter("expiringMedicines", expiringCount);
-    animateCounter("lowStock", lowStockCount);
-    animateCounter("totalValue", totalValue, "₹");
+    document.getElementById("totalMedicines").textContent = totalMedicines;
+    document.getElementById("totalStock").textContent = totalStock;
+    document.getElementById("totalValue").textContent = `₹${totalValue.toFixed(2)}`;
+    document.getElementById("lowStock").textContent = lowStockCount;
+    document.getElementById("expiredMedicines").textContent = expiredCount;
+    document.getElementById("expiringMedicines").textContent = expiringCount;
 
     // Update expiry chart
     updateExpiryChart(validCount, expiringCount, expiredCount, totalMedicines);
@@ -235,24 +235,36 @@ function animateCounter(elementId, targetValue, prefix = "", suffix = "") {
 function updateExpiryChart(valid, expiring, expired, total) {
   total = Math.max(0, total);
 
+  // Avoid division by zero
   if (total === 0) {
     ["validBar", "expiringBar", "expiredBar"].forEach(id => {
       document.getElementById(id).style.width = "0%";
     });
+    document.getElementById("validCount").textContent = "0";
+    document.getElementById("expiringCount").textContent = "0";
+    document.getElementById("expiredCount").textContent = "0";
     return;
   }
 
+  // Calculate percentages
   const validPercent = (valid / total) * 100;
   const expiringPercent = (expiring / total) * 100;
   const expiredPercent = (expired / total) * 100;
 
+  // Update progress bar widths
   document.getElementById("validBar").style.width = `${validPercent}%`;
   document.getElementById("expiringBar").style.width = `${expiringPercent}%`;
   document.getElementById("expiredBar").style.width = `${expiredPercent}%`;
 
-  document.getElementById("validBar").title = `${valid} medicines (${validPercent.toFixed(1)}%)`;
-  document.getElementById("expiringBar").title = `${expiring} medicines (${expiringPercent.toFixed(1)}%)`;
-  document.getElementById("expiredBar").title = `${expired} medicines (${expiredPercent.toFixed(1)}%)`;
+  // Update counts beside progress bars
+  document.getElementById("validCount").textContent = valid;
+  document.getElementById("expiringCount").textContent = expiring;
+  document.getElementById("expiredCount").textContent = expired;
+
+  // Tooltip with percentage info
+  document.getElementById("validBar").title = `${valid} valid medicines (${validPercent.toFixed(1)}%)`;
+  document.getElementById("expiringBar").title = `${expiring} expiring soon (${expiringPercent.toFixed(1)}%)`;
+  document.getElementById("expiredBar").title = `${expired} expired (${expiredPercent.toFixed(1)}%)`;
 }
 
 // ===============================

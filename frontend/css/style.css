@@ -5408,3 +5408,63 @@ body.no-scroll {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
+
+/* ===== Expiry Status Chart ===== */
+.modern-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.chart-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.chart-bar {
+  flex: 1;
+  height: 14px;
+  background: #f4f4f4;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bar-fill {
+  height: 100%;
+  width: 0;
+  transition: width 1s ease-in-out;
+  border-radius: 8px;
+}
+
+/* Specific Colors */
+.valid-fill {
+  background: #4CAF50; /* Green */
+}
+
+.expiring-fill {
+  background: #FF9800; /* Orange */
+}
+
+.expired-fill {
+  background: #F44336; /* Red */
+}
+
+.chart-label {
+  min-width: 120px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.label-text {
+  color: #333;
+}
+
+.label-count {
+  color: #000;
+}

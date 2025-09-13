@@ -113,7 +113,7 @@
         <div class="summary-card yellow">
           <i class="fas fa-hourglass-half"></i>
           <p>Expiring Soon</p>
-          <span class="description">Will expire within 30 days</span>
+          <span class="description">Medicines Nearing Expiry</span>
           <h3 id="expiringMedicines">0</h3>
         </div>
       </div>
@@ -121,15 +121,18 @@
       <!-- Main Content Grid -->
       <div class="dashboard-grid">
         <!-- Chart Section -->
+        <!-- Expiry Status Overview -->
         <div class="chart-section">
           <div class="section-header">
             <h3><i class="fas fa-chart-pie"></i> Expiry Status Overview</h3>
             <span class="section-badge">Live Data</span>
           </div>
+
           <div class="modern-chart" id="expiryChart">
+            <!-- Valid Medicines -->
             <div class="chart-item valid">
               <div class="chart-bar">
-                <div class="bar-fill" id="validBar"></div>
+                <div class="bar-fill valid-fill" id="validBar"></div>
               </div>
               <div class="chart-label">
                 <span class="label-text">Valid</span>
@@ -137,9 +140,10 @@
               </div>
             </div>
 
+            <!-- Expiring Soon Medicines -->
             <div class="chart-item expiring">
               <div class="chart-bar">
-                <div class="bar-fill" id="expiringBar"></div>
+                <div class="bar-fill expiring-fill" id="expiringBar"></div>
               </div>
               <div class="chart-label">
                 <span class="label-text">Expiring Soon</span>
@@ -147,9 +151,10 @@
               </div>
             </div>
 
+            <!-- Expired Medicines -->
             <div class="chart-item expired">
               <div class="chart-bar">
-                <div class="bar-fill" id="expiredBar"></div>
+                <div class="bar-fill expired-fill" id="expiredBar"></div>
               </div>
               <div class="chart-label">
                 <span class="label-text">Expired</span>
