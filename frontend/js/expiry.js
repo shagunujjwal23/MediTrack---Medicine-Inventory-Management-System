@@ -30,27 +30,22 @@ function renderExpiryTable(medicines) {
 
   medicines.forEach((med, index) => {
     const expiryDate = med.expiryDate ? new Date(med.expiryDate) : null;
-    const status = getExpiryStatus(med);
-    let statusText = "Unknown";
-    let statusColor = "gray";
+    const expiryStatus = getExpiryStatus(med);
 
-    if (status === "expired") {
-      statusText = "Expired";
-      statusColor = "red";
-    } else if (status === "expiring") {
-      statusText = "Expiring Soon";
-      statusColor = "orange";
-    } else if (status === "valid") {
-      statusText = "Valid";
-      statusColor = "green";
-    }
+    // Skip valid medicines, only show expired or expiring soon
+    if (expiryStatus === "valid") return;
+
+    // Badge for expired or expiring soon
+    const statusBadge = expiryStatus === "expired"
+      ? `<span class="badge expired">Expired</span>`
+      : `<span class="badge expiring">Expiring Soon</span>`;
 
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${index + 1}</td>
       <td>${med.name || med.medicineName || "Unnamed"}</td>
       <td>${expiryDate ? expiryDate.toLocaleDateString() : "N/A"}</td>
-      <td style="color:${statusColor}; font-weight:bold;">${statusText}</td>
+      <td>${statusBadge}</td>
     `;
     tableBody.appendChild(row);
   });
@@ -93,9 +88,11 @@ function applyFilters() {
     return true;
   });
 
-  // Render and update summary based on filtered data
+  // Render filtered data into table
   renderExpiryTable(filteredMeds);
-  updateSummary(filteredMeds);
+
+  // Always update summary based on *all medicines*
+  updateSummary(allMedicines);
 }
 
 // Fetch and calculate expiry data

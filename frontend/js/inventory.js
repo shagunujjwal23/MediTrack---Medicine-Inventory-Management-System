@@ -203,32 +203,55 @@ function renderInventoryTable(medicines) {
     // ===============================
     // Status: Valid / Expiring Soon / Expired
     // ===============================
-    let status = "Valid";
-    let statusClass = "status-valid";
+    // ===============================
+    // Multiple Status Tracking
+    // ===============================
+    let statuses = [];
     let rowClass = "valid-row";
 
+    // Threshold for low stock
+    const unit = med.unit ? med.unit.toLowerCase() : "pack";
+    const threshold = unitThresholds[unit] || 2;
+
+    // -------------------------
+    // 1. Expired Medicines
+    // -------------------------
     if (daysUntilExpiry <= 0) {
-      status = "Expired";
-      statusClass = "status-expired";  // Expired
+      statuses.push("Expired");
       rowClass = "expired-row";
       expiredCount++;
-    } else if (daysUntilExpiry <= 90) {
-      status = "Expiring Soon";
-      statusClass = "status-soon";     // Expiring Soon
-      rowClass = "expiring-row";
-    }
 
-    // ===============================
-    // Low Stock Detection
-    // ===============================
-    const unit = med.unit ? med.unit.toLowerCase() : "pack";
-    const threshold = unitThresholds[unit] || 2; // default threshold = 2
-    if (med.quantity <= threshold) {
-      lowStockCount++;
-      if (status === "Valid") {
-        status = "Low Stock";
-        statusClass = "status-low-stock";
-        rowClass = "low-stock-row";
+      // Expired but also low stock
+      if (med.quantity <= threshold) {
+        statuses.push("Low Stock");
+        lowStockCount++;
+      }
+    }
+    // -------------------------
+    // 2. Expiring Soon Medicines
+    // -------------------------
+    else if (daysUntilExpiry <= 90) {
+      statuses.push("Expiring Soon");
+      rowClass = "expiring-row";
+
+      if (med.quantity <= threshold) {
+        statuses.push("Low Stock");
+        lowStockCount++;
+      }
+    }
+    // -------------------------
+    // 3. Valid Medicines
+    // -------------------------
+    else {
+      statuses.push("Valid");
+
+      if (med.quantity <= threshold) {
+        statuses.push("Low Stock");
+        lowStockCount++;
+
+        if (rowClass === "valid-row") {
+          rowClass = "low-stock-row";
+        }
       }
     }
 
@@ -245,22 +268,32 @@ function renderInventoryTable(medicines) {
     const row = document.createElement("tr");
     row.className = rowClass + " medicine-row";
     row.innerHTML = `
-      <td class="toggle-cell">
-        <span class="arrow">&#9654;</span>
-        <span class="medicine-name"><strong>${med.name}</strong></span>
-      </td>
-      <td>${med.manufacturer || 'N/A'}</td>
-      <td><span class="category-badge">${med.category || 'General'}</span></td>
-      <td>${med.batchNo || med.batch}</td>
-      <td class="quantity-cell">${med.quantity} ${med.unit}</td>
-      <td>₹${med.price.toFixed(2)}</td>
-      <td>${expDate.toLocaleDateString()}</td>
-      <td><span class="${statusClass}">${status}</span></td>
-      <td>
-        <button class="btn-small btn-edit" onclick="editMedicine(${index})">Edit</button>
-        <button class="btn-small btn-delete" onclick="deleteMedicine(${index})">Delete</button>
-      </td>
-    `;
+  <td class="toggle-cell">
+    <span class="arrow">&#9654;</span>
+    <span class="medicine-name"><strong>${med.name}</strong></span>
+  </td>
+  <td>${med.manufacturer || 'N/A'}</td>
+  <td><span class="category-badge">${med.category || 'General'}</span></td>
+  <td>${med.batchNo || med.batch}</td>
+  <td class="quantity-cell">${med.quantity} ${med.unit}</td>
+  <td>₹${med.price.toFixed(2)}</td>
+  <td>${expDate.toLocaleDateString()}</td>
+ <td>
+  ${statuses.map(status => {
+      let cls = "";
+      if (status === "Expired") cls = "expired";
+      else if (status === "Expiring Soon") cls = "expiring-soon";
+      else if (status === "Valid") cls = "valid";
+      else if (status === "Low Stock") cls = "low-stock";
+
+      return `<span class="status-badge ${cls}">${status}</span>`;
+    }).join('')}
+</td>
+  <td>
+    <button class="btn-small btn-edit" onclick="editMedicine(${index})">Edit</button>
+    <button class="btn-small btn-delete" onclick="deleteMedicine(${index})">Delete</button>
+  </td>
+`;
     tbody.appendChild(row);
 
     // ===============================
