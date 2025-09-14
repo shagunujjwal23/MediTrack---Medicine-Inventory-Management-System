@@ -77,23 +77,39 @@ function applyFilters() {
     if (!med.expiryDate) return false;
     const expiryDate = new Date(med.expiryDate);
     const diffDays = (expiryDate - today) / (1000 * 60 * 60 * 24);
-    const status = getExpiryStatus(med);
+    const status = getExpiryStatus(med); // expired, expiring, valid
 
-    // Category filter
-    if (categoryFilter !== "all" && categoryFilter !== status) return false;
+    // ===== Category Filter =====
+    if (categoryFilter === "expired" && status !== "expired") return false;
+    if (categoryFilter === "expiring" && status !== "expiring") return false;
 
-    // Days filter (skip expired)
-    if (filterDays !== "all" && status !== "expired") {
+    // ===== Days Filter =====
+    if (filterDays !== "all") {
+      // Expired medicines are NEVER part of day filter
+      if (status === "expired") return false;
+
+      // Medicine must expire within the selected number of days
       if (diffDays > parseInt(filterDays)) return false;
     }
 
     return true;
   });
 
-  // Render filtered data into table
-  renderExpiryTable(filteredMeds);
+  // ===== Show message if no data found =====
+  if (filteredMeds.length === 0) {
+    const tableBody = document.getElementById("expiryTableBody");
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align:center; color: gray;">
+          No medicines found for the selected filters
+        </td>
+      </tr>
+    `;
+  } else {
+    renderExpiryTable(filteredMeds);
+  }
 
-  // Always update summary based on *all medicines*
+  // Update summary counts based on ALL medicines
   updateSummary(allMedicines);
 }
 
