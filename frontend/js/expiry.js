@@ -28,6 +28,7 @@ function renderExpiryTable(medicines) {
     return;
   }
 
+  let serial = 1;
   medicines.forEach((med, index) => {
     const expiryDate = med.expiryDate ? new Date(med.expiryDate) : null;
     const expiryStatus = getExpiryStatus(med);
@@ -42,12 +43,13 @@ function renderExpiryTable(medicines) {
 
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td>${index + 1}</td>
+      <td>${serial}</td>
       <td>${med.name || med.medicineName || "Unnamed"}</td>
       <td>${expiryDate ? expiryDate.toLocaleDateString() : "N/A"}</td>
       <td>${statusBadge}</td>
     `;
     tableBody.appendChild(row);
+    serial++;
   });
 }
 
@@ -109,6 +111,35 @@ async function loadExpiryData() {
   }
 }
 
+// ===============================
+// Logout Functionality
+// ===============================
+function setupLogout() {
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  if (!logoutBtn) {
+    console.error("Logout button not found on expiry page!");
+    return;
+  }
+
+  logoutBtn.addEventListener("click", () => {
+    const confirmLogout = confirm("Are you sure you want to logout?");
+    if (!confirmLogout) {
+      console.log("Logout cancelled by user.");
+      return;
+    }
+
+    console.log("User confirmed logout from expiry page!");
+
+    // Clear all saved session and user data
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Redirect securely to login page
+    window.location.replace("index.html");
+  });
+}
+
 // Run on page load
 document.addEventListener("DOMContentLoaded", () => {
   // Check if inventory triggered a refresh
@@ -122,4 +153,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Filters
   document.getElementById("filterDays")?.addEventListener("change", applyFilters);
   document.getElementById("categoryFilter")?.addEventListener("change", applyFilters);
+
+
+  // ✅ Initialize logout
+  setupLogout();
 });
+

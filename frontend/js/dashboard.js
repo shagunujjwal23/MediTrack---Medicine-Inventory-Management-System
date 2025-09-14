@@ -387,6 +387,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (clearBtn) {
     clearBtn.addEventListener("click", clearAllNotifications);
   }
+  
+  // Setup logout
+  setupLogout();
 });
 
 // ===============================
@@ -488,5 +491,36 @@ function openExportModal() {
 // ======= Close Modal =======
 function closeExportModal() {
   document.getElementById("exportModal").style.display = "none";
+}
+
+// ===============================
+// 12) Logout Functionality
+// ===============================
+function setupLogout() {
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  if (!logoutBtn) {
+    console.error("Logout button not found!");
+    return;
+  }
+
+  logoutBtn.addEventListener("click", () => {
+    // ✅ Show confirmation dialog
+    const confirmLogout = confirm("Are you sure you want to logout?");
+    
+    if (!confirmLogout) {
+      console.log("Logout cancelled by user.");
+      return; // Stop logout process
+    }
+
+    console.log("User confirmed logout!");
+
+    // ✅ Clear all authentication data
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // ✅ Redirect securely to login page
+    window.location.replace("index.html");
+  });
 }
 
