@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Expiry Tracker | MediTrack</title>
   <link rel="stylesheet" href="../css/style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 </head>
 
 <body>
@@ -19,7 +19,7 @@
             <i class="fas fa-user-circle"></i>
           </div>
           <div class="user-details">
-            <span class="user-name">Loading...</span>
+            <span class="user-name">Shagun</span>
             <span class="user-role">User</span>
           </div>
         </div>
@@ -57,14 +57,14 @@
         <div class="header-actions">
           <div class="header-filters">
             <select id="filterDays" class="filter-select">
-              <option value="all">🌐 All medicines</option>
+              <option value="all">📦 All Medicines</option>
               <option value="7">⚡ Expiring in 7 days</option>
               <option value="30">⚠️ Expiring in 30 days</option>
               <option value="60">📋 Expiring in 60 days</option>
               <option value="90">📊 Expiring in 90 days</option>
             </select>
             <select id="categoryFilter" class="filter-select">
-              <option value="all">🏷️ All Categories</option>
+              <option value="all">🏷️ All Statuses</option>
               <option value="expired">❌ Expired</option>
               <option value="expiring">⚠️ Expiring Soon</option>
             </select>
@@ -76,6 +76,19 @@
             </button>
           </div>
         </div>
+      </div>
+
+      <!-- Total Filtered Medicines Card -->
+      <div class="overview-card info" data-category="total">
+        <div class="card-icon">
+          <i class="fas fa-cubes"></i>
+        </div>
+        <div class="card-content">
+          <h3 id="totalFilteredCount">0</h3>
+          <p>Total Medicines</p>
+          <span class="card-status">Based on Selected Filters</span>
+        </div>
+        <div class="card-indicator info-indicator"></div>
       </div>
 
       <!-- Status Overview Cards -->
@@ -115,8 +128,6 @@
         </div>
       </div>
 
-      <!-- Summary Cards (keep as they are) -->
-
       <!-- Combined Medicines Table -->
       <div class="table-section">
         <h2>Expiry Status of Medicines</h2>
@@ -125,6 +136,7 @@
             <tr>
               <th>No.</th>
               <th>Medicine Name</th>
+              <th>Batch No.</th>
               <th>Expiry Date</th>
               <th>Status</th>
             </tr>

@@ -23,20 +23,19 @@ function renderExpiryTable(medicines) {
 
   if (medicines.length === 0) {
     const row = document.createElement("tr");
-    row.innerHTML = `<td colspan="4" style="text-align:center;">No medicines found</td>`;
+    row.innerHTML = `<td colspan="5" style="text-align:center; color: gray;">No medicines found</td>`;
     tableBody.appendChild(row);
     return;
   }
 
   let serial = 1;
-  medicines.forEach((med, index) => {
+  medicines.forEach(med => {
     const expiryDate = med.expiryDate ? new Date(med.expiryDate) : null;
     const expiryStatus = getExpiryStatus(med);
 
     // Skip valid medicines, only show expired or expiring soon
     if (expiryStatus === "valid") return;
 
-    // Badge for expired or expiring soon
     const statusBadge = expiryStatus === "expired"
       ? `<span class="badge expired">Expired</span>`
       : `<span class="badge expiring">Expiring Soon</span>`;
@@ -45,6 +44,7 @@ function renderExpiryTable(medicines) {
     row.innerHTML = `
       <td>${serial}</td>
       <td>${med.name || med.medicineName || "Unnamed"}</td>
+      <td>${med.batchNo || "N/A"}</td>
       <td>${expiryDate ? expiryDate.toLocaleDateString() : "N/A"}</td>
       <td>${statusBadge}</td>
     `;
@@ -53,17 +53,31 @@ function renderExpiryTable(medicines) {
   });
 }
 
-// Update summary cards
-function updateSummary(medicines) {
-  let expired = 0, expiring = 0;
-  medicines.forEach(med => {
+/// ===============================
+// Update Summary Cards
+// ===============================
+function updateSummary(filteredMedicines) {
+  let expired = 0, expiring = 0, total = 0;
+
+  filteredMedicines.forEach(med => {
     const status = getExpiryStatus(med);
     if (status === "expired") expired++;
-    if (status === "expiring") expiring++;
+    else if (status === "expiring") expiring++;
+
+    // Count only expired or expiring in total
+    if (status === "expired" || status === "expiring") {
+      total++;
+    }
   });
 
+  // Update cards
   document.getElementById("expiredCount").textContent = expired;
   document.getElementById("expiringSoonCount").textContent = expiring;
+
+  const totalFilteredCountElement = document.getElementById("totalFilteredCount");
+  if (totalFilteredCountElement) {
+    totalFilteredCountElement.textContent = total;
+  }
 }
 
 // Apply filters from dropdowns
@@ -100,7 +114,7 @@ function applyFilters() {
     const tableBody = document.getElementById("expiryTableBody");
     tableBody.innerHTML = `
       <tr>
-        <td colspan="4" style="text-align:center; color: gray;">
+        <td colspan="5" style="text-align:center; color: gray;">
           No medicines found for the selected filters
         </td>
       </tr>
@@ -109,8 +123,8 @@ function applyFilters() {
     renderExpiryTable(filteredMeds);
   }
 
-  // Update summary counts based on ALL medicines
-  updateSummary(allMedicines);
+// Update summary counts based on FILTERED medicines
+updateSummary(filteredMeds);
 }
 
 // Fetch and calculate expiry data
