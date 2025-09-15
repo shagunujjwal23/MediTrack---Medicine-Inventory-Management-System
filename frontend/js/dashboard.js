@@ -376,6 +376,9 @@ function closeNotificationSidebar() {
 document.addEventListener("DOMContentLoaded", () => {
   loadDashboardData();
 
+  // ✅ Load notifications immediately on page load
+  loadNotifications();
+
   // ✅ Notification button (bell icon)
   const notifBtn = document.getElementById("notificationBtn");
   if (notifBtn) {
