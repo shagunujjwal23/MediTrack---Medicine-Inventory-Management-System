@@ -1,8 +1,11 @@
 const API_BASE_URL = 'http://localhost:5000/api';
 
 let allMedicines = []; // global storage
+const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
 
+// ===============================
 // Get expiry status helper
+// ===============================
 function getExpiryStatus(med) {
   if (!med.expiryDate) return "unknown";
   const today = new Date();
@@ -14,7 +17,9 @@ function getExpiryStatus(med) {
   return "valid";
 }
 
+// ===============================
 // Render expiry table
+// ===============================
 function renderExpiryTable(medicines) {
   const tableBody = document.getElementById("expiryTableBody");
   if (!tableBody) return;
@@ -53,7 +58,7 @@ function renderExpiryTable(medicines) {
   });
 }
 
-/// ===============================
+// ===============================
 // Update Summary Cards
 // ===============================
 function updateSummary(filteredMedicines) {
@@ -64,52 +69,41 @@ function updateSummary(filteredMedicines) {
     if (status === "expired") expired++;
     else if (status === "expiring") expiring++;
 
-    // Count only expired or expiring in total
-    if (status === "expired" || status === "expiring") {
-      total++;
-    }
+    if (status === "expired" || status === "expiring") total++;
   });
 
-  // Update cards
   document.getElementById("expiredCount").textContent = expired;
   document.getElementById("expiringSoonCount").textContent = expiring;
 
   const totalFilteredCountElement = document.getElementById("totalFilteredCount");
-  if (totalFilteredCountElement) {
-    totalFilteredCountElement.textContent = total;
-  }
+  if (totalFilteredCountElement) totalFilteredCountElement.textContent = total;
 }
 
+// ===============================
 // Apply filters from dropdowns
+// ===============================
 function applyFilters() {
   const filterDays = document.getElementById("filterDays")?.value || "all";
   const categoryFilter = document.getElementById("categoryFilter")?.value || "all";
-
   const today = new Date();
 
   let filteredMeds = allMedicines.filter(med => {
     if (!med.expiryDate) return false;
     const expiryDate = new Date(med.expiryDate);
     const diffDays = (expiryDate - today) / (1000 * 60 * 60 * 24);
-    const status = getExpiryStatus(med); // expired, expiring, valid
+    const status = getExpiryStatus(med);
 
-    // ===== Category Filter =====
     if (categoryFilter === "expired" && status !== "expired") return false;
     if (categoryFilter === "expiring" && status !== "expiring") return false;
 
-    // ===== Days Filter =====
     if (filterDays !== "all") {
-      // Expired medicines are NEVER part of day filter
       if (status === "expired") return false;
-
-      // Medicine must expire within the selected number of days
       if (diffDays > parseInt(filterDays)) return false;
     }
 
     return true;
   });
 
-  // ===== Show message if no data found =====
   if (filteredMeds.length === 0) {
     const tableBody = document.getElementById("expiryTableBody");
     tableBody.innerHTML = `
@@ -123,11 +117,12 @@ function applyFilters() {
     renderExpiryTable(filteredMeds);
   }
 
-// Update summary counts based on FILTERED medicines
-updateSummary(filteredMeds);
+  updateSummary(filteredMeds);
 }
 
+// ===============================
 // Fetch and calculate expiry data
+// ===============================
 async function loadExpiryData() {
   try {
     const res = await fetch(`${API_BASE_URL}/medicines`);
@@ -135,7 +130,6 @@ async function loadExpiryData() {
 
     // First render without filters
     applyFilters();
-
   } catch (err) {
     console.error("Error loading expiry data:", err);
   }
@@ -146,33 +140,38 @@ async function loadExpiryData() {
 // ===============================
 function setupLogout() {
   const logoutBtn = document.getElementById("logoutBtn");
-
-  if (!logoutBtn) {
-    console.error("Logout button not found on expiry page!");
-    return;
-  }
+  if (!logoutBtn) return;
 
   logoutBtn.addEventListener("click", () => {
-    const confirmLogout = confirm("Are you sure you want to logout?");
-    if (!confirmLogout) {
-      console.log("Logout cancelled by user.");
-      return;
-    }
-
-    console.log("User confirmed logout from expiry page!");
-
-    // Clear all saved session and user data
+    if (!confirm("Are you sure you want to logout?")) return;
     localStorage.clear();
     sessionStorage.clear();
-
-    // Redirect securely to login page
     window.location.replace("index.html");
   });
 }
 
-// Run on page load
+// ===============================
+// Display logged-in user info (Full Name + Role)
+// ===============================
+function displayUserInfo() {
+  const fullNameElem = document.getElementById('userFirstName'); // or your name display element
+  const roleElem = document.getElementById('userRole');
+
+  if (!currentUser) return;
+
+  // Show full name (first + last)
+  const fullName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim();
+  if (fullNameElem) fullNameElem.textContent = fullName || 'User';
+
+  // Show role in lowercase (or capitalize first letter if you want)
+  if (roleElem) roleElem.textContent = currentUser.role ? currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1) : 'User';
+}
+
+// ===============================
+// Initialize page
+// ===============================
 document.addEventListener("DOMContentLoaded", () => {
-  // Check if inventory triggered a refresh
+  // Auto-refresh after inventory update
   if (localStorage.getItem("refreshExpiry") === "true") {
     localStorage.removeItem("refreshExpiry");
     console.log("Auto-refreshing expiry data after inventory update...");
@@ -184,8 +183,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("filterDays")?.addEventListener("change", applyFilters);
   document.getElementById("categoryFilter")?.addEventListener("change", applyFilters);
 
-
-  // ✅ Initialize logout
   setupLogout();
-});
+  displayUserInfo();
 
+  // Hide User Management for non-admins
+  if (currentUser.role !== 'admin') {
+    const userLink = document.getElementById('userManagementLink');
+    if (userLink) userLink.style.display = 'none';
+  }
+});

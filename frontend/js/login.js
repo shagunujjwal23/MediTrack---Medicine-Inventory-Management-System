@@ -118,8 +118,12 @@ function handleLogin(e) {
                 localStorage.setItem('currentUser', JSON.stringify(response.user));
 
                 setTimeout(() => {
-                    // ✅ Only admin dashboard now
-                    window.location.href = 'dashboard.html';
+                    // Role-based redirection
+                    if (response.user.role === 'admin') {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
                 }, 1500);
             }
         })
@@ -165,8 +169,12 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data && data.user) {
-                    // ✅ Always go to admin dashboard
-                    window.location.href = 'dashboard.html';
+                    // Redirect based on role
+                    if (data.user.role === 'admin') {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        window.location.href = 'user-dashboard.html';
+                    }
                 } else {
                     removeToken();
                     sessionStorage.removeItem('authToken');

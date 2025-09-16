@@ -272,11 +272,11 @@ function updateExpiryChart(valid, expiring, expired, total) {
 // ===============================
 const NOTIF_API_URL = `${API_BASE_URL}/notifications`;
 
-async function loadNotifications() {
+async function loadNotifications(showAll = true) {
   try {
-    const res = await fetch(NOTIF_API_URL);
+    const url = `${NOTIF_API_URL}${showAll ? '?all=true' : ''}`;
+    const res = await fetch(url);
     const json = await res.json();
-
     const notifications = json.data || [];
     renderNotifications(notifications);
     updateBadgeCount(notifications);
@@ -390,10 +390,21 @@ document.addEventListener("DOMContentLoaded", () => {
   if (clearBtn) {
     clearBtn.addEventListener("click", clearAllNotifications);
   }
-  
+
   // Setup logout
   setupLogout();
+
+  // ==============================
+  // Hide User Management for non-admins
+  // ==============================
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  if (currentUser.role !== 'admin') {
+    const userLink = document.getElementById('userManagementLink');
+    if (userLink) userLink.style.display = 'none';
+  }
+
 });
+
 
 // ===============================
 // 11) Export Inventory Report
@@ -510,7 +521,7 @@ function setupLogout() {
   logoutBtn.addEventListener("click", () => {
     // ✅ Show confirmation dialog
     const confirmLogout = confirm("Are you sure you want to logout?");
-    
+
     if (!confirmLogout) {
       console.log("Logout cancelled by user.");
       return; // Stop logout process
@@ -525,5 +536,24 @@ function setupLogout() {
     // ✅ Redirect securely to login page
     window.location.replace("index.html");
   });
+
+  
+// ===============================
+// Display logged-in user info (Full Name + Role)
+// ===============================
+function displayUserInfo() {
+  const fullNameElem = document.getElementById('userFirstName'); // or your name display element
+  const roleElem = document.getElementById('userRole');
+
+  if (!currentUser) return;
+
+  // Show full name (first + last)
+  const fullName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim();
+  if (fullNameElem) fullNameElem.textContent = fullName || 'User';
+
+  // Show role in lowercase (or capitalize first letter if you want)
+  if (roleElem) roleElem.textContent = currentUser.role ? currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1) : 'User';
 }
 
+
+}

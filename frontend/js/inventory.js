@@ -19,6 +19,16 @@ document.addEventListener("DOMContentLoaded", function () {
   loadInventory();
   setupFilters();
   setupLogout();
+
+  // ==============================
+  // Hide User Management for non-admins
+  // ==============================
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  if (currentUser.role !== 'admin') {
+    const userLink = document.getElementById('userManagementLink');
+    if (userLink) userLink.style.display = 'none';
+  }
+
 });
 
 // =========================
@@ -59,7 +69,7 @@ function checkAuthentication() {
 }
 
 function updateUserInfo(user) {
-  const userNameElements = document.querySelectorAll('.user-name');
+  const userNameElements = document.querySelectorAll('#userFirstName, .user-name');
   userNameElements.forEach(el => {
     const displayName = user.lastName === 'User' ? user.firstName : `${user.firstName} ${user.lastName}`;
     el.textContent = displayName;

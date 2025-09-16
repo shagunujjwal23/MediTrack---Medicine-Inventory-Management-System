@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management | MediTrack</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar (copied from dashboard for consistency) -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>💊 Medicine Inventory</h2>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+          <li><a href="add-medicine.html"><i class="fas fa-plus-circle"></i> Add Medicine</a></li>
+          <li><a href="inventory.html"><i class="fas fa-boxes"></i> Inventory</a></li>
+          <li><a href="expiry.html"><i class="fas fa-clock"></i> Expiry Tracker</a></li>
+          <li><a href="user-management.html" class="active"><i class="fas fa-users"></i> User Management</a></li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="logoutBtn" class="logout-btn" data-action="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content fade-in">
+
+      <!-- Add User Form -->
+      <section class="form-section">
+        <h2>Add User</h2>
+        <form id="addUserForm">
+          <input type="text" id="username" placeholder="Username" required>
+          <input type="text" id="firstName" placeholder="First Name" required>
+          <input type="text" id="lastName" placeholder="Last Name" required>
+          <input type="email" id="email" placeholder="Email" required>
+          <input type="password" id="password" placeholder="Password" required>
+          <select id="role">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+            <option value="pharmacist">Pharmacist</option>
+          </select>
+          <button type="submit">Add User</button>
+        </form>
+      </section>
+
+      <!-- User List -->
+      <section class="table-section">
+        <h2>All Users</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody">
+            <!-- Users will load here -->
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/user-management.js"></script>
+</body>
+</html>

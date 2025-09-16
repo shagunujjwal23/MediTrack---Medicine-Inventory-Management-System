@@ -133,7 +133,7 @@ function initializePage() {
     }
 
     function updateUserInfo(user) {
-        const userNameElements = document.querySelectorAll('.user-name');
+        const userNameElements = document.querySelectorAll('#userFirstname, .user-name');
         userNameElements.forEach(el => {
             // Display just the first name if lastName is "User", otherwise show full name
             const displayName = user.lastName === 'User' ? user.firstName : `${user.firstName} ${user.lastName}`;
@@ -148,6 +148,12 @@ function initializePage() {
         roleElements.forEach(el => {
             el.textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
         });
+
+        // Hide User Management link for non-admins
+        if (user.role !== 'admin') {
+            const userLink = document.getElementById('userManagementLink');
+            if (userLink) userLink.style.display = 'none';
+        }
 
         // Store for future use
         localStorage.setItem('currentUser', JSON.stringify(user));

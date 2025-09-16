@@ -64,44 +64,6 @@ body {
   gap: 10px;
 }
 
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-}
-
-.user-avatar {
-  font-size: 32px;
-  color: #667eea;
-}
-
-.user-details {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.user-name {
-  font-weight: 600;
-  font-size: 14px;
-  color: #fff;
-  transition: opacity 0.3s ease;
-  min-height: 20px;
-  display: flex;
-  align-items: center;
-}
-
-.user-role {
-  font-size: 12px;
-  color: #a0aec0;
-  text-transform: capitalize;
-  transition: opacity 0.3s ease;
-}
-
 /* Loading state for user info */
 .user-name.loading::after {
   content: "Loading...";
