@@ -53,7 +53,6 @@ router.post('/login', loginLimiter, loginValidation, async (req, res) => {
                 lastName: 'User',
                 role: 'admin'
             });
-            console.log('✅ Default admin account created');
         }
 
         // 🔹 Authenticate using model static method
