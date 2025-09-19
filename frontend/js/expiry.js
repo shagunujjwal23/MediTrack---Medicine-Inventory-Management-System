@@ -13,7 +13,7 @@ function getExpiryStatus(med) {
   const diffDays = (expiryDate - today) / (1000 * 60 * 60 * 24);
 
   if (diffDays < 0) return "expired";
-  if (diffDays <= 30) return "expiring";
+  if (diffDays <= 90) return "expiring";
   return "valid";
 }
 

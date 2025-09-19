@@ -80,7 +80,7 @@ function processMedicineData(medicines) {
     // ============================
     if (daysUntilExpiry <= 0) {
       expiredCount++;
-    } else if (daysUntilExpiry <= 30) {
+    } else if (daysUntilExpiry <= 90) {
       expiringCount++;
     } else {
       validCount++;
